@@ -1,7 +1,4 @@
-#include <iostream>
-#include <Windows.h>
-#include "player.h"
-#include "map.h"
+#include "includes.h"
 
 void playerMovement(Player& p_ash, Map& p_map) {
     if (GetAsyncKeyState(VK_UP) & 0x8000 && p_map.GetCharAt(p_ash.GetX() - 1, p_ash.GetY()) != 'X') {

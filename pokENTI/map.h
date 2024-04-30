@@ -1,16 +1,22 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <string>
-#include <vector>
+#include "includes.h"
+#include <fstream>
+#include <sstream>
 
 class Player;
 
 class Map {
 private:
-    std::vector<std::vector<char>> map;
-    int mapWidth, mapHeight;
-    std::vector<bool> zones_unlocked;
+    char** map;
+    int mapWidth = 0;
+    int mapHeight = 0;
+    bool* zones_unlocked = nullptr;
+    int pokemonInPuebloPaleta = 0;
+    int requiredPokemonForBosque = 0;
+    int pokemonInBosque = 0;
+    int pokemonRequiredForCuevaCeleste = 0;
 public:
     Map();
     void LoadMapSettings(const std::string& filename);
@@ -23,5 +29,7 @@ public:
 
     int getWidth();
     int getHeight();
+
+    ~Map();
 };
 #endif 

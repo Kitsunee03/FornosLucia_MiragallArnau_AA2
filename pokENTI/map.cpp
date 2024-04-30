@@ -1,12 +1,30 @@
 #include "map.h"
-#include "player.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 Map::Map() {
-    // Inicializar el vector de zonas desbloqueadas con 4 elementos, todos en false
-    zones_unlocked.resize(4, false);
+    mapWidth = 0;
+    mapHeight = 0;
+    zones_unlocked = nullptr;
+    pokemonInPuebloPaleta = 0;
+    requiredPokemonForBosque = 0;
+    pokemonInBosque = 0;
+    pokemonRequiredForCuevaCeleste = 0;
+
+    // Asignación de memoria para el mapa
+    map = new char* [mapWidth];
+    for (int i = 0; i < mapWidth; ++i) {
+        map[i] = new char[mapHeight];
+    }
+}
+
+Map::~Map() {
+    // Liberación de memoria del mapa
+    for (int i = 0; i < mapWidth; ++i) {
+        delete[] map[i];
+    }
+    delete[] map;
+
+    // Liberación de memoria de las zonas desbloqueadas
+    delete[] zones_unlocked;
 }
 
 void Map::LoadMapSettings(const std::string& filename) {
@@ -21,7 +39,10 @@ void Map::LoadMapSettings(const std::string& filename) {
             if (iss >> mapWidth >> delimiter >> mapHeight) {
                 std::cout << "Ancho: " << mapWidth << ", Alto: " << mapHeight << std::endl;
                 // Redimensionar el mapa según las dimensiones leídas
-                map.resize(mapWidth, std::vector<char>(mapHeight));
+                map = new char* [mapWidth];
+                for (int i = 0; i < mapWidth; i++){
+                    map[i] = new char[mapHeight];
+                }
             }
         }
 
@@ -29,20 +50,18 @@ void Map::LoadMapSettings(const std::string& filename) {
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
-            int initial_pokemon, required_pokemon;
-            if (iss >> initial_pokemon >> delimiter >> required_pokemon) {
-                std::cout << "Pokemons en Pueblo Paleta: " << initial_pokemon << ", Pokemons requeridos para desbloquear la siguiente zona: " << required_pokemon << std::endl;
+            if (iss >> pokemonInPuebloPaleta >> delimiter >> requiredPokemonForBosque) {
+                std::cout << "Pokemons en Pueblo Paleta: " << pokemonInPuebloPaleta << ", Pokemons requeridos para desbloquear la siguiente zona: " << requiredPokemonForBosque << std::endl;
                 // Guardar esta información en alguna estructura de datos si es necesario
             }
         }
 
         // Leer la tercera línea para obtener información sobre los Pokémon en el Bosque
         if (std::getline(file, line)) {
-            std::istringstream iss(line);
+            std::istringstream iss(line); 
             char delimiter;
-            int initial_pokemon, required_pokemon;
-            if (iss >> initial_pokemon >> delimiter >> required_pokemon) {
-                std::cout << "Pokemons en el Bosque: " << initial_pokemon << ", Pokemons requeridos para desbloquear la siguiente zona: " << required_pokemon << std::endl;
+            if (iss >> pokemonInBosque >> delimiter >> pokemonRequiredForCuevaCeleste) {
+                std::cout << "Pokemons en el Bosque: " << pokemonInBosque << ", Pokemons requeridos para desbloquear la siguiente zona: " << pokemonRequiredForCuevaCeleste << std::endl;
                 // Guardar esta información en alguna estructura de datos si es necesario
             }
         }
@@ -94,9 +113,7 @@ void Map::generateMap(Player& player) {
     //ancho -> columna y alto -> fila
     for (int i = 0; i < mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
-            map[i][quadrantHeight] = 'X';
-            map[quadrantWidth][j] = 'X';
-            if (i == 0 || i == mapWidth - 1 || j == 0 || j == mapHeight - 1) { map[i][j] = 'X'; } //map borders
+            if (i == 0 || i == mapWidth - 1 || j == 0 || j == mapHeight - 1 || i == quadrantWidth || j == quadrantHeight) { map[i][j] = 'X'; } //map borders
             else if (i == player_y && j == player_x) { map[i][j] = 'v'; }
             else { map[i][j] = '.'; }
         }
