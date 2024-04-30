@@ -12,6 +12,7 @@ private:
     char** map;
     int mapWidth = 0;
     int mapHeight = 0;
+    int regionSize = 12;
     bool* zones_unlocked = nullptr;
     int pokemonInPuebloPaleta = 0;
     int requiredPokemonForBosque = 0;
@@ -26,6 +27,8 @@ public:
     void SetCharAt(int x, int y, char newChar);
     void PrintView(Player& player);
     void generateMap(Player& player);
+
+    void SpawnPokemon(int p_zone);
 
     int getWidth();
     int getHeight();

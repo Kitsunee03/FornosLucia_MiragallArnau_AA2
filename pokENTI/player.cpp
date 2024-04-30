@@ -1,6 +1,9 @@
 #include "player.h"
 
-Player::Player(int initialX, int initialY) : x(initialX), y(initialY), direction('v') {}
+Player::Player(int initialX, int initialY) : x(initialX), y(initialY), direction('v') {
+    pokemonAmount = 0;
+    pokeList = new Pokemon[pokemonAmount];
+}
 
 void Player::Move(int p_x, int p_y) {
     x += p_x;
@@ -12,3 +15,5 @@ int Player::GetY() { return y; }
 
 char Player::GetDirection() { return direction; }
 void Player::SetDirection(char dir) { direction = dir; }
+
+void Player::AddPokemon(Pokemon p_pokemon) { pokeList[++pokemonAmount] = p_pokemon; }

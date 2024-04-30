@@ -6,6 +6,7 @@ private:
     int x, y;
 public:
     Pokemon(int initialX, int initialY);
+    Pokemon();
 };
 
 #endif

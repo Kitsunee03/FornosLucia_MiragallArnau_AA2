@@ -1,9 +1,10 @@
 #include "map.h"
+#include "random"
 
 Map::Map() {
     mapWidth = 0;
     mapHeight = 0;
-    zones_unlocked = nullptr;
+    zones_unlocked = new bool[4];
     pokemonInPuebloPaleta = 0;
     requiredPokemonForBosque = 0;
     pokemonInBosque = 0;
@@ -11,19 +12,15 @@ Map::Map() {
 
     // Asignación de memoria para el mapa
     map = new char* [mapWidth];
-    for (int i = 0; i < mapWidth; ++i) {
-        map[i] = new char[mapHeight];
-    }
+    for (int i = 0; i < mapWidth; ++i) { map[i] = new char[mapHeight]; }
 }
 
 Map::~Map() {
-    // Liberación de memoria del mapa
-    for (int i = 0; i < mapWidth; ++i) {
-        delete[] map[i];
-    }
+    // Map cleaning
+    for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
     delete[] map;
 
-    // Liberación de memoria de las zonas desbloqueadas
+    // Zones cleaning
     delete[] zones_unlocked;
 }
 
@@ -63,8 +60,8 @@ void Map::UnlockZone(int zone) {
     if (zone >= 0 && zone < 4) { zones_unlocked[zone] = true; }
 }
 
-bool Map::IsZoneUnlocked(int zone) {
-    if (zone >= 0 && zone < 4) { return zones_unlocked[zone]; }
+bool Map::IsZoneUnlocked(int p_zone) {
+    if (p_zone >= 0 && p_zone < 4) { return zones_unlocked[p_zone]; }
     return false;
 }
 
@@ -73,9 +70,7 @@ char Map::GetCharAt(int x, int y) {
     return ',';
 }
 
-void Map::SetCharAt(int x, int y, char newChar) {
-    map[x][y] = newChar;
-}
+void Map::SetCharAt(int x, int y, char newChar) { map[x][y] = newChar; }
 
 void Map::PrintView(Player& player) {
     const int player_x = player.GetX();
@@ -88,10 +83,8 @@ void Map::PrintView(Player& player) {
         << ", Pokemons requeridos para desbloquear la siguiente zona: " << pokemonRequiredForCuevaCeleste << std::endl;
 
     // Imprimir mapa
-    for (int i = player_x - 12; i < player_x + 12; i++) {
-        for (int j = player_y - 12; j < player_y + 12; j++) {
-            std::cout << GetCharAt(i, j);
-        }
+    for (int i = player_x - regionSize; i < player_x + regionSize; i++) {
+        for (int j = player_y - regionSize; j < player_y + regionSize; j++) { std::cout << GetCharAt(i, j); }
         std::cout << std::endl;
     }
 }
@@ -103,12 +96,55 @@ void Map::generateMap(Player& player) {
     const int quadrantWidth = mapWidth / 2;
     const int quadrantHeight = mapHeight / 2;
 
-    //ancho -> columna y alto -> fila
     for (int i = 0; i < mapWidth; i++) {
-        for (int j = 0; j < mapHeight; j++) {
-            if (i == 0 || i == mapWidth - 1 || j == 0 || j == mapHeight - 1 || i == quadrantWidth || j == quadrantHeight) { map[i][j] = 'X'; } //map borders
+        for (int j = 0; j < mapHeight; j++) { // Map borders
+            if (i == 0 || i == mapWidth - 1 || i == quadrantWidth ||
+                j == 0 || j == mapHeight - 1 || j == quadrantHeight) {
+                map[i][j] = 'X';
+            }
             else if (i == player_y && j == player_x) { map[i][j] = 'v'; }
             else { map[i][j] = '.'; }
+        }
+    }
+
+    SpawnPokemon(0);
+}
+
+void Map::SpawnPokemon(int p_zone) {
+    if (!IsZoneUnlocked(p_zone)) { return; }
+
+    int xOffset = 0;
+    int yOffset = 0;
+    switch (p_zone)
+    {
+    default: break;
+    case 1: {
+        xOffset = 1;
+        yOffset = 0;
+        break;
+    }
+    case 2: {
+        xOffset = 0;
+        yOffset = 1;
+        break;
+    }
+    case 3: {
+        xOffset = 1;
+        yOffset = 1;
+        break;
+    }
+    }
+
+    bool hasSpawned = false;
+    int xPos = 0;
+    int yPos = 0;
+    while (!hasSpawned) {
+        xPos = rand() % regionSize + (regionSize * xOffset);
+        yPos = rand() % regionSize + (regionSize * yOffset);
+
+        if (GetCharAt(xPos, yPos) == '.') {
+            SetCharAt(xPos, yPos, 'P');
+            hasSpawned = true;
         }
     }
 }
