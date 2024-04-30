@@ -88,9 +88,14 @@ void Map::generateMap(Player& player) {
     const int player_x = player.GetX();
     const int player_y = player.GetY();
 
+    const int quadrantWidth = mapWidth / 2;
+    const int quadrantHeight = mapHeight / 2;
+
     //ancho -> columna y alto -> fila
     for (int i = 0; i < mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
+            map[i][quadrantHeight] = 'X';
+            map[quadrantWidth][j] = 'X';
             if (i == 0 || i == mapWidth - 1 || j == 0 || j == mapHeight - 1) { map[i][j] = 'X'; } //map borders
             else if (i == player_y && j == player_x) { map[i][j] = 'v'; }
             else { map[i][j] = '.'; }
