@@ -32,45 +32,32 @@ void Map::LoadMapSettings(const std::string& filename) {
     if (file.is_open()) {
         std::string line;
 
-        // Leer la primera línea para obtener las dimensiones del mapa
+        // Dimensiones del mapa
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
-            if (iss >> mapWidth >> delimiter >> mapHeight) {
-                std::cout << "Ancho: " << mapWidth << ", Alto: " << mapHeight << std::endl;
-                // Redimensionar el mapa según las dimensiones leídas
-                map = new char* [mapWidth];
-                for (int i = 0; i < mapWidth; i++){
-                    map[i] = new char[mapHeight];
-                }
-            }
+            iss >> mapWidth >> delimiter >> mapHeight;
+            map = new char* [mapWidth];
+            for (int i = 0; i < mapWidth; i++) { map[i] = new char[mapHeight]; }
         }
 
-        // Leer la segunda línea para obtener información sobre los Pokémon en Pueblo Paleta
+        // Pokémon en Pueblo Paleta
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
-            if (iss >> pokemonInPuebloPaleta >> delimiter >> requiredPokemonForBosque) {
-                std::cout << "Pokemons en Pueblo Paleta: " << pokemonInPuebloPaleta << ", Pokemons requeridos para desbloquear la siguiente zona: " << requiredPokemonForBosque << std::endl;
-                // Guardar esta información en alguna estructura de datos si es necesario
-            }
+            iss >> pokemonInPuebloPaleta >> delimiter >> requiredPokemonForBosque;
         }
 
-        // Leer la tercera línea para obtener información sobre los Pokémon en el Bosque
+        // Pokémon en el Bosque
         if (std::getline(file, line)) {
-            std::istringstream iss(line); 
+            std::istringstream iss(line);
             char delimiter;
-            if (iss >> pokemonInBosque >> delimiter >> pokemonRequiredForCuevaCeleste) {
-                std::cout << "Pokemons en el Bosque: " << pokemonInBosque << ", Pokemons requeridos para desbloquear la siguiente zona: " << pokemonRequiredForCuevaCeleste << std::endl;
-                // Guardar esta información en alguna estructura de datos si es necesario
-            }
+            iss >> pokemonInBosque >> delimiter >> pokemonRequiredForCuevaCeleste;
         }
-
         file.close();
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
 }
-
 
 void Map::UnlockZone(int zone) {
     if (zone >= 0 && zone < 4) { zones_unlocked[zone] = true; }
@@ -93,6 +80,12 @@ void Map::SetCharAt(int x, int y, char newChar) {
 void Map::PrintView(Player& player) {
     const int player_x = player.GetX();
     const int player_y = player.GetY();
+
+    std::cout << "Ancho: " << mapWidth << ", Alto: " << mapHeight << std::endl;
+    std::cout << "Pokemons en Pueblo Paleta: " << pokemonInPuebloPaleta
+        << ", Pokemons requeridos para desbloquear la siguiente zona: " << requiredPokemonForBosque << std::endl;
+    std::cout << "Pokemons en el Bosque: " << pokemonInBosque
+        << ", Pokemons requeridos para desbloquear la siguiente zona: " << pokemonRequiredForCuevaCeleste << std::endl;
 
     // Imprimir mapa
     for (int i = player_x - 12; i < player_x + 12; i++) {
