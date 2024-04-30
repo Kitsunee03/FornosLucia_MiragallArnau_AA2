@@ -1,9 +1,12 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "includes.h"
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include "random"
+#include "pokemon.h"
+#include "player.h"
 
 class Player;
 
@@ -12,23 +15,31 @@ private:
     char** map;
     int mapWidth = 0;
     int mapHeight = 0;
-    int regionSize = 12;
+    int regionSize = 25;
     bool* zones_unlocked = nullptr;
     int pokemonInPuebloPaleta = 0;
     int requiredPokemonForBosque = 0;
     int pokemonInBosque = 0;
     int pokemonRequiredForCuevaCeleste = 0;
+    Pokemon* mapPokeList = nullptr;
+    int currentPokemonAmount = 0;
 public:
     Map();
-    void LoadMapSettings(const std::string& filename);
-    void UnlockZone(int zone);
+    void LoadMapSettings(const std::string filename);
+
     bool IsZoneUnlocked(int zone);
+    void ZoneLockUpdate(Player& player);
+
     char GetCharAt(int x, int y);
     void SetCharAt(int x, int y, char newChar);
+
     void PrintView(Player& player);
     void generateMap(Player& player);
 
     void SpawnPokemon(int p_zone);
+    int GetCurrentRegion(Player& player);
+
+    Pokemon GetPokemonInRange(Player& player);
 
     int getWidth();
     int getHeight();

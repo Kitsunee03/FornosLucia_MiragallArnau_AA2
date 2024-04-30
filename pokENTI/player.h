@@ -19,5 +19,6 @@ public:
     void SetDirection(char dir);
 
     void AddPokemon(Pokemon p_pokemon);
+    int PokemonAmount();
 };
 #endif

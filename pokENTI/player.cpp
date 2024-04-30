@@ -12,8 +12,9 @@ void Player::Move(int p_x, int p_y) {
 
 int Player::GetX() { return x; }
 int Player::GetY() { return y; }
+int Player::PokemonAmount() { return pokemonAmount; }
 
 char Player::GetDirection() { return direction; }
 void Player::SetDirection(char dir) { direction = dir; }
 
-void Player::AddPokemon(Pokemon p_pokemon) { pokeList[++pokemonAmount] = p_pokemon; }
+void Player::AddPokemon(Pokemon p_pokemon) { pokeList[pokemonAmount++] = p_pokemon; }

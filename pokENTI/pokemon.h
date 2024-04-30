@@ -3,10 +3,14 @@
 
 class Pokemon {
 private:
-    int x, y;
+    int x;
+    int y;
 public:
     Pokemon(int initialX, int initialY);
     Pokemon();
+
+    int GetX();
+    int GetY();
 };
 
 #endif
