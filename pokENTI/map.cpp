@@ -63,8 +63,18 @@ bool Map::IsZoneUnlocked(int p_zone) {
     return false;
 }
 void Map::ZoneLockUpdate(Player& player) {
-    if (!IsZoneUnlocked(1) && player.PokemonAmount() >= requiredPokemonForBosque) { zones_unlocked[1] = true; }
-    else if (!IsZoneUnlocked(2) && player.PokemonAmount() >= pokemonRequiredForCuevaCeleste) { zones_unlocked[2] = true; }
+    if (!IsZoneUnlocked(1) && player.PokemonAmount() >= requiredPokemonForBosque) { 
+        for (int i = 1; i < mapWidth / 2; i++) {
+            SetCharAt(i, mapHeight / 2, '.'); 
+        }
+        zones_unlocked[1] = true; 
+    }
+    else if (!IsZoneUnlocked(2) && player.PokemonAmount() >= pokemonRequiredForCuevaCeleste) { 
+        for (int i = mapHeight / 2; i < mapHeight -1; i++) {
+            SetCharAt(mapWidth / 2, i, '.'); 
+        }
+        zones_unlocked[2] = true; 
+    }
 }
 
 char Map::GetCharAt(int p_x, int p_y) {
