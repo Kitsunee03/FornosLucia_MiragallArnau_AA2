@@ -1,25 +1,13 @@
 #include "map.h"
 
-Map::Map() {
-    mapWidth = 0;
-    mapHeight = 0;
-    pokemonInPuebloPaleta = 0;
-    requiredPokemonForBosque = 0;
-    pokemonInBosque = 0;
-    pokemonRequiredForCuevaCeleste = 0;
-
-    // Asignación de memoria para el mapa
-    map = new char* [mapWidth];
-    for (int i = 0; i < mapWidth; ++i) { map[i] = new char[mapHeight]; }
-
-    zones_unlocked = new bool[4] {true, false, false, false};
-}
+Map::Map() : mapWidth(0), mapHeight(0), pokemonInPuebloPaleta(0), requiredPokemonForBosque(0),
+pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}) {}
 
 Map::~Map() {
-    // Map cleaning
-    for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
-    delete[] map;
-
+    if (map != nullptr) {
+        for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
+        delete[] map;
+    }
     // Zones cleaning
     delete[] zones_unlocked;
 }
@@ -145,8 +133,8 @@ void Map::SpawnPokemon(int p_zone) {
     int xPos = 0;
     int yPos = 0;
     while (!hasSpawned) {
-        xPos = rand() % regionSize + (regionSize * xOffset);
-        yPos = rand() % regionSize + (regionSize * yOffset);
+        xPos = rand() % (mapWidth / 2) + (mapWidth / 2) * xOffset;
+        yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
 
         if (GetCharAt(xPos, yPos) == '.') {
             mapPokeList[currentPokemonAmount++] = Pokemon(xPos, yPos);
