@@ -8,7 +8,7 @@ Map::~Map() {
         for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
         delete[] map;
     }
-    // Zones cleaning
+
     delete[] zones_unlocked;
 }
 
@@ -17,7 +17,6 @@ void Map::LoadMapSettings(const std::string filename) {
     if (file.is_open()) {
         std::string line;
 
-        // Dimensiones del mapa
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
@@ -26,14 +25,12 @@ void Map::LoadMapSettings(const std::string filename) {
             for (int i = 0; i < mapWidth; i++) { map[i] = new char[mapHeight]; }
         }
 
-        // Pokémon en Pueblo Paleta
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
             iss >> pokemonInPuebloPaleta >> delimiter >> requiredPokemonForBosque;
         }
 
-        // Pokémon en el Bosque
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
@@ -58,7 +55,7 @@ void Map::ZoneLockUpdate(Player& player) {
         zones_unlocked[1] = true; 
     }
     else if (!IsZoneUnlocked(2) && player.PokemonAmount() >= pokemonRequiredForCuevaCeleste) { 
-        for (int i = mapHeight / 2; i < mapHeight -1; i++) {
+        for (int i = mapHeight / 2 + 1; i < mapHeight -1; i++) {
             SetCharAt(mapWidth / 2, i, '.'); 
         }
         zones_unlocked[2] = true; 
@@ -75,7 +72,6 @@ void Map::PrintView(Player& p_player) {
     const int player_x = p_player.GetX();
     const int player_y = p_player.GetY();
 
-    // Imprimir mapa
     for (int i = player_x - regionSize / 2; i < player_x + regionSize / 2; i++) {
         for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) { std::cout << GetCharAt(i, j); }
         std::cout << std::endl;
@@ -112,7 +108,7 @@ void Map::generateMap(Player& p_player) {
     const int quadrantHeight = mapHeight / 2;
 
     for (int i = 0; i < mapWidth; i++) {
-        for (int j = 0; j < mapHeight; j++) { // Map borders
+        for (int j = 0; j < mapHeight; j++) {
             if (i == 0 || i == mapWidth - 1 || i == quadrantWidth ||
                 j == 0 || j == mapHeight - 1 || j == quadrantHeight) {
                 map[i][j] = 'X';
@@ -148,8 +144,6 @@ int Map::GetCurrentRegion(Player& p_player) {
     int x = p_player.GetX();
     int y = p_player.GetY();
 
-    //0  1
-    //3  2
     if (x < mapWidth / 2) {
         if (y < mapHeight / 2) { return 0; }
         return 1;
