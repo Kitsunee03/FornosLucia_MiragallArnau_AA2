@@ -1,7 +1,8 @@
 #include "map.h"
 
 Map::Map() : mapWidth(0), mapHeight(0), pokemonInPuebloPaleta(0), requiredPokemonForBosque(0),
-pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}) {}
+pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), pikachuPower(0), healthPokemons(0), healthMewtwo(0), minTimeMovePokemon(0), 
+maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}) {}
 
 Map::~Map() {
     if (map != nullptr) {
@@ -36,6 +37,28 @@ void Map::LoadMapSettings(const std::string filename) {
             char delimiter;
             iss >> pokemonInBosque >> delimiter >> pokemonRequiredForCuevaCeleste;
         }
+
+        if (std::getline(file, line)) {
+            std::istringstream iss(line);
+            char delimiter;
+            iss >> pikachuPower;
+            std::cout << "Poder Pikachu -> " << pikachuPower << std::endl;
+        }
+
+        if (std::getline(file, line)) {
+            std::istringstream iss(line);
+            char delimiter;
+            iss >> healthPokemons >> delimiter >> healthMewtwo;
+            std::cout << "Vida Pokemon -> " << healthPokemons << " Vida Mewtwo -> " << healthMewtwo << std::endl;
+        }
+
+        if (std::getline(file, line)) {
+            std::istringstream iss(line);
+            char delimiter;
+            iss >> minTimeMovePokemon >> delimiter >> maxTimeMovePokemon;
+            std::cout << "Tiempo minimo movimiento pokemon -> " << minTimeMovePokemon << " Maximo -> " << maxTimeMovePokemon << std::endl;
+        }
+
         file.close();
 
         mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];

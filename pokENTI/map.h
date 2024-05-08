@@ -21,6 +21,11 @@ private:
     int requiredPokemonForBosque = 0;
     int pokemonInBosque = 0;
     int pokemonRequiredForCuevaCeleste = 0;
+    int pikachuPower = 0;
+    int healthPokemons = 0;
+    int healthMewtwo = 0;
+    int minTimeMovePokemon = 0;
+    int maxTimeMovePokemon = 0;
     Pokemon* mapPokeList = nullptr;
     int currentPokemonAmount = 0;
 public:
