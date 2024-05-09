@@ -8,5 +8,6 @@
 #include "map.h"
 #include "player.h"
 #include "pokemon.h"
+#include "pokeBall.h"
 
 #endif 

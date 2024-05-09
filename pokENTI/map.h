@@ -6,6 +6,7 @@
 #include <sstream>
 #include "random"
 #include "pokemon.h"
+#include "pokeBall.h"
 #include "player.h"
 
 class Player;
@@ -28,6 +29,9 @@ private:
     int maxTimeMovePokemon = 0;
     Pokemon* mapPokeList = nullptr;
     int currentPokemonAmount = 0;
+    PokeBall* pokeballList = nullptr;
+    const int MAX_POKEBALLS = 0;
+    int currentPokeBallsAmount = 0;
 public:
     Map();
     void LoadMapSettings(const std::string filename);
@@ -42,9 +46,11 @@ public:
     void generateMap(Player& player);
 
     void SpawnPokemon(int p_zone);
+    void SpawnPokeball(int p_zone);
     int GetCurrentRegion(Player& player);
 
     Pokemon GetPokemonInRange(Player& player);
+    PokeBall GetPokeBallIntRange(Player& player);
 
     int getWidth();
     int getHeight();

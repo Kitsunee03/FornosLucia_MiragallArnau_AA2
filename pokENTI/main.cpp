@@ -37,6 +37,14 @@ void movementInput(Player& p_ash, Map& p_map) {
 
 void captureInput(Player& p_ash, Map& p_map) {
     bool reprint = false;
+    PokeBall pokeBall = p_map.GetPokeBallIntRange(p_ash);
+    if (pokeBall.GetX() != -1) {
+        p_ash.AddPokeBall(pokeBall);
+        p_map.SetCharAt(pokeBall.GetX(), pokeBall.GetY(), '.');
+        p_map.SpawnPokeball(p_map.GetCurrentRegion(p_ash));
+        reprint = true;
+    }
+
     if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
         if (p_map.GetPokemonInRange(p_ash).GetX() == -1) { return; }
 

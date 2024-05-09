@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "pokemon.h"
+#include "pokeBall.h"
 
 class Player {
 private:
@@ -9,6 +10,8 @@ private:
     char direction;
     int pokemonAmount = 0;
     Pokemon* pokeList = nullptr;
+    int pokeBallAmount = 0;
+    PokeBall* pokeBallList = nullptr;
 public:
     Player(int initialX, int initialY);
 
@@ -18,7 +21,10 @@ public:
     char GetDirection();
     void SetDirection(char dir);
 
-    void AddPokemon(Pokemon p_pokemon);
+    void AddPokemon(Pokemon p_pokemon);    
     int PokemonAmount();
+
+    void AddPokeBall(PokeBall p_pokeBall);
+    int PokeBallAmount();
 };
 #endif

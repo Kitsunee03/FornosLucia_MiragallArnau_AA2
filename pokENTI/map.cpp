@@ -2,7 +2,7 @@
 
 Map::Map() : mapWidth(0), mapHeight(0), pokemonInPuebloPaleta(0), requiredPokemonForBosque(0),
 pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), pikachuPower(0), healthPokemons(0), healthMewtwo(0), minTimeMovePokemon(0), 
-maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}) {}
+maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}), MAX_POKEBALLS(1), currentPokeBallsAmount(0){}
 
 Map::~Map() {
     if (map != nullptr) {
@@ -62,6 +62,7 @@ void Map::LoadMapSettings(const std::string filename) {
         file.close();
 
         mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];
+        pokeballList = new PokeBall[MAX_POKEBALLS];
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
 }
@@ -120,6 +121,7 @@ void Map::PrintView(Player& p_player) {
     }
 
     std::cout << "Ash pokemons -> " << p_player.PokemonAmount() << "\t" << std::endl;
+    std::cout << "Ash pokeBalls -> " << p_player.PokeBallAmount() << std::endl;
     std::cout << "------------------------";
 }
 
@@ -143,7 +145,10 @@ void Map::generateMap(Player& p_player) {
 
     for (int i = 0; i < pokemonInPuebloPaleta; i++) { SpawnPokemon(0); }
     for (int i = 0; i < pokemonInBosque; i++) { SpawnPokemon(1); }
+    SpawnPokeball(0);
+    SpawnPokeball(1);
 }
+
 void Map::SpawnPokemon(int p_zone) {
     int xOffset = (p_zone == 2 || p_zone == 3) ? 1 : 0;
     int yOffset = (p_zone == 1 || p_zone == 3) ? 1 : 0;
@@ -158,6 +163,25 @@ void Map::SpawnPokemon(int p_zone) {
         if (GetCharAt(xPos, yPos) == '.') {
             mapPokeList[currentPokemonAmount++] = Pokemon(xPos, yPos);
             SetCharAt(xPos, yPos, 'P');
+            hasSpawned = true;
+        }
+    }
+}
+
+void Map::SpawnPokeball(int p_zone) {
+    int xOffset = (p_zone == 2 || p_zone == 3) ? 1 : 0;
+    int yOffset = (p_zone == 1 || p_zone == 3) ? 1 : 0;
+
+    bool hasSpawned = false;
+    int xPos = 0;
+    int yPos = 0;
+    while (!hasSpawned) {
+        xPos = rand() % (mapWidth / 2) + (mapWidth / 2) * xOffset;
+        yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
+
+        if (GetCharAt(xPos, yPos) == '.') {
+            pokeballList[currentPokeBallsAmount++] = PokeBall(xPos, yPos);
+            SetCharAt(xPos,yPos,'O');
             hasSpawned = true;
         }
     }
@@ -188,6 +212,18 @@ Pokemon Map::GetPokemonInRange(Player& p_player) {
     }
 
     return Pokemon(-1, -1);
+}
+
+PokeBall Map::GetPokeBallIntRange(Player& p_player) {
+    for (int i = p_player.GetX() - 1; i <= p_player.GetX() + 1; i++) {
+        for (int j = p_player.GetY() - 1; j <= p_player.GetY() + 1; j++) {
+            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight && map[i][j] == 'O') {
+                return PokeBall(i, j);
+            }
+        }
+    }
+
+    return PokeBall(-1, -1);
 }
 
 int Map::getWidth() { return mapWidth; }

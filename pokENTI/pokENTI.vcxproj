@@ -130,12 +130,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="pokeBall.cpp" />
     <ClCompile Include="pokemon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="pokeBall.h" />
     <ClInclude Include="pokemon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
