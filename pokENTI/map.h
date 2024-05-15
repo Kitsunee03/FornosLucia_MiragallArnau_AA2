@@ -28,14 +28,15 @@ private:
     int minTimeMovePokemon = 0;
     int maxTimeMovePokemon = 0;
     Pokemon* mapPokeList = nullptr;
-    int currentPokemonAmount = 0;
+    
     PokeBall* pokeballList = nullptr;
     const int MAX_POKEBALLS = 0;
     int currentPokeBallsAmount = 0;
+    int MAX_POKEMON_AMOUNT = 0;
 public:
     Map();
     void LoadMapSettings(const std::string filename);
-
+    
     bool IsZoneUnlocked(int zone);
     void ZoneLockUpdate(Player& player);
 
@@ -44,16 +45,21 @@ public:
 
     void PrintView(Player& player);
     void generateMap(Player& player);
-
+    std::string GetMapView(Player& p_player);
+    int currentPokemonAmount = 0;
     void SpawnPokemon(int p_zone);
     void SpawnPokeball(int p_zone);
-    int GetCurrentRegion(Player& player);
+    void UpdatePokemonMovement();
+    int GetCurrentRegion(int x, int y);
 
     Pokemon GetPokemonInRange(Player& player);
     PokeBall GetPokeBallIntRange(Player& player);
 
     int getWidth();
     int getHeight();
+    int getCurrentPokemonAmount();
+
+    void setCurrentPokemonAmount(int p_currentPokemonAmount);
 
     ~Map();
 };

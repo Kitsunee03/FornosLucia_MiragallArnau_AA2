@@ -7,6 +7,11 @@ Player::Player(int initialX, int initialY) : x(initialX), y(initialY), direction
     pokeBallList = new PokeBall[pokeBallAmount];
 }
 
+Player::~Player() {
+    delete[] pokeList;
+    delete[] pokeBallList;
+}
+
 void Player::Move(int p_x, int p_y) {
     x += p_x;
     y += p_y;

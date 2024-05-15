@@ -5,12 +5,15 @@ pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), pikachuPower(0), healthPo
 maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}), MAX_POKEBALLS(1), currentPokeBallsAmount(0){}
 
 Map::~Map() {
-    if (map != nullptr) {
-        for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
-        delete[] map;
-    }
+    delete[] mapPokeList;
+    delete[] pokeballList;
 
     delete[] zones_unlocked;
+
+    for (int i = 0; i < mapWidth; ++i) {
+        delete[] map[i];
+    }
+    delete[] map;
 }
 
 void Map::LoadMapSettings(const std::string filename) {
@@ -63,6 +66,7 @@ void Map::LoadMapSettings(const std::string filename) {
 
         mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];
         pokeballList = new PokeBall[MAX_POKEBALLS];
+        MAX_POKEMON_AMOUNT = pokemonInBosque + pokemonInPuebloPaleta;
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
 }
@@ -104,10 +108,10 @@ void Map::PrintView(Player& p_player) {
     std::cout << "------------------------" << std::endl;
     std::cout << "Width -> " << mapWidth << " Height -> " << mapHeight << std::endl;
 
-    if (GetCurrentRegion(p_player) == 0) {
+    if (GetCurrentRegion(p_player.GetX(), p_player.GetY()) == 0) {
         std::cout << "Pokemons at Pueblo Paleta -> " << pokemonInPuebloPaleta << std::endl;
     }
-    else if (GetCurrentRegion(p_player) == 1) {
+    else if (GetCurrentRegion(p_player.GetX(), p_player.GetY()) == 1) {
         std::cout << "Pokemons at the forest -> " << pokemonInBosque << std::endl;
     }
 
@@ -149,7 +153,31 @@ void Map::generateMap(Player& p_player) {
     SpawnPokeball(1);
 }
 
+std::string Map::GetMapView(Player& p_player) {
+    const int player_x = p_player.GetX();
+    const int player_y = p_player.GetY();
+    const int regionSize = this->regionSize; // Utilizar el mismo tamaño de región que en PrintView
+
+    std::string mapView;
+
+    for (int i = player_x - regionSize / 2; i <= player_x + regionSize / 2; i++) {
+        for (int j = player_y - regionSize / 2; j <= player_y + regionSize / 2; j++) {
+            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
+                mapView += GetCharAt(i, j);
+            }
+            else {
+                mapView += ' '; // Caracter de relleno si el índice está fuera del mapa
+            }
+        }
+        mapView += '\n'; // Agregar un salto de línea después de cada fila
+    }
+
+    return mapView;
+}
+
 void Map::SpawnPokemon(int p_zone) {
+    if (currentPokemonAmount >= MAX_POKEMON_AMOUNT) { return; }
+
     int xOffset = (p_zone == 2 || p_zone == 3) ? 1 : 0;
     int yOffset = (p_zone == 1 || p_zone == 3) ? 1 : 0;
 
@@ -164,6 +192,23 @@ void Map::SpawnPokemon(int p_zone) {
             mapPokeList[currentPokemonAmount++] = Pokemon(xPos, yPos);
             SetCharAt(xPos, yPos, 'P');
             hasSpawned = true;
+        }
+    }
+}
+
+void Map::UpdatePokemonMovement() {
+    for (int i = 0; i < currentPokemonAmount; ++i) {
+        // Obtener las coordenadas del Pokémon actual
+        int pokemonX = mapPokeList[i].GetX();
+        int pokemonY = mapPokeList[i].GetY();
+
+        // Obtener la zona del Pokémon actual
+        int zone = GetCurrentRegion(pokemonX, pokemonY);
+
+        // Si la zona del Pokémon está desbloqueada
+        if (IsZoneUnlocked(zone)) {
+            // Actualizar el tiempo de espera y el movimiento del Pokémon
+            mapPokeList[i].UpdateMoveWaitTime(minTimeMovePokemon, maxTimeMovePokemon, map, mapWidth, mapHeight);
         }
     }
 }
@@ -187,10 +232,7 @@ void Map::SpawnPokeball(int p_zone) {
     }
 }
 
-int Map::GetCurrentRegion(Player& p_player) {
-    int x = p_player.GetX();
-    int y = p_player.GetY();
-
+int Map::GetCurrentRegion(int x, int y) {
     if (x < mapWidth / 2) {
         if (y < mapHeight / 2) { return 0; }
         return 1;
@@ -198,6 +240,7 @@ int Map::GetCurrentRegion(Player& p_player) {
     else if (y < mapHeight / 2) { return 3; }
     return 2;
 }
+
 
 Pokemon Map::GetPokemonInRange(Player& p_player) {
     for (int i = p_player.GetX() - 1; i < p_player.GetX() + 2; i++) {
@@ -228,3 +271,6 @@ PokeBall Map::GetPokeBallIntRange(Player& p_player) {
 
 int Map::getWidth() { return mapWidth; }
 int Map::getHeight() { return mapHeight; }
+int Map::getCurrentPokemonAmount() { return currentPokemonAmount; }
+
+void Map::setCurrentPokemonAmount(int p_currentPokemonAmount) { currentPokemonAmount = p_currentPokemonAmount; }

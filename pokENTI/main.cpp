@@ -1,5 +1,10 @@
 #include "includes.h"
 
+void printMap(const std::string& mapView) {
+    system("cls");
+    std::cout << mapView;
+}
+
 void movementInput(Player& p_ash, Map& p_map) {
     bool reprint = false;
     if (GetAsyncKeyState(VK_UP) & 0x8000 && p_map.GetCharAt(p_ash.GetX() - 1, p_ash.GetY()) == '.') {
@@ -41,7 +46,7 @@ void captureInput(Player& p_ash, Map& p_map) {
     if (pokeBall.GetX() != -1) {
         p_ash.AddPokeBall(pokeBall);
         p_map.SetCharAt(pokeBall.GetX(), pokeBall.GetY(), '.');
-        p_map.SpawnPokeball(p_map.GetCurrentRegion(p_ash));
+        p_map.SpawnPokeball(p_map.GetCurrentRegion(p_ash.GetX(), p_ash.GetY()));
         reprint = true;
     }
 
@@ -51,7 +56,8 @@ void captureInput(Player& p_ash, Map& p_map) {
         Pokemon poke = p_map.GetPokemonInRange(p_ash);
         p_ash.AddPokemon(poke);
         p_map.SetCharAt(poke.GetX(), poke.GetY(), '.');
-        p_map.SpawnPokemon(p_map.GetCurrentRegion(p_ash));
+        p_map.setCurrentPokemonAmount( p_map.getCurrentPokemonAmount() - 1 );
+        p_map.SpawnPokemon(p_map.GetCurrentRegion(p_ash.GetX(), p_ash.GetY()));
 
         reprint = true;
     }
@@ -71,14 +77,22 @@ int main() {
     Player ash(2,2);
 
     map.generateMap(ash);
-    map.PrintView(ash);
+    std::string currentMapView = map.GetMapView(ash); // Obtener la vista inicial del mapa
+    printMap(currentMapView); // Imprimir la vista inicial del mapa
 
     bool gameOver = false;
     while (!gameOver) {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { gameOver = true; }
 
         movementInput(ash, map);
-        captureInput(ash, map);
+        map.UpdatePokemonMovement();
+        captureInput(ash, map);        
+
+        std::string newMapView = map.GetMapView(ash);
+        if (newMapView != currentMapView) {
+            currentMapView = newMapView;
+            printMap(currentMapView); // Imprimir la vista actualizada del mapa
+        }
 
         Sleep(100);
     }

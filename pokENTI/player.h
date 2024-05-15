@@ -14,6 +14,7 @@ private:
     PokeBall* pokeBallList = nullptr;
 public:
     Player(int initialX, int initialY);
+    ~Player();
 
     void Move(int dx, int dy);
     int GetX();
