@@ -153,17 +153,14 @@ std::string Map::GetMapView(Player& p_player) {
     const int regionSize = this->regionSize; // Utilizar el mismo tamaño de región que en PrintView
 
     std::string mapView;
-
-    for (int i = player_x - regionSize / 2; i <= player_x + regionSize / 2; i++) {
-        for (int j = player_y - regionSize / 2; j <= player_y + regionSize / 2; j++) {
+    for (int i = player_x - regionSize / 2; i < player_x + regionSize / 2; i++) {
+        for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) {
             if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
                 mapView += GetCharAt(i, j);
             }
-            else {
-                mapView += ' '; // Caracter de relleno si el índice está fuera del mapa
-            }
+            else { mapView += ','; }
         }
-        mapView += '\n'; // Agregar un salto de línea después de cada fila
+        mapView += '\n';
     }
 
     return mapView;
