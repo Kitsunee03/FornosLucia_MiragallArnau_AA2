@@ -1,10 +1,5 @@
 #include "includes.h"
 
-void printMap(const std::string& mapView) {
-    system("cls");
-    std::cout << mapView;
-}
-
 void movementInput(Player& p_ash, Map& p_map) {
     bool reprint = false;
     if (GetAsyncKeyState(VK_UP) & 0x8000 && p_map.GetCharAt(p_ash.GetX() - 1, p_ash.GetY()) == '.') {
@@ -74,11 +69,11 @@ int main() {
     srand(time(NULL));
     Map map;
     map.LoadMapSettings("config.txt");
-    Player ash(2,2);
+    Player ash(2, 2);
 
     map.generateMap(ash);
-    std::string currentMapView = map.GetMapView(ash); // Obtener la vista inicial del mapa
-    printMap(currentMapView); // Imprimir la vista inicial del mapa
+    std::string currentMapView = map.GetMapView(ash);
+    map.PrintView(ash);
 
     bool gameOver = false;
     while (!gameOver) {
@@ -86,12 +81,13 @@ int main() {
 
         movementInput(ash, map);
         map.UpdatePokemonMovement();
-        captureInput(ash, map);        
+        captureInput(ash, map);
 
         std::string newMapView = map.GetMapView(ash);
         if (newMapView != currentMapView) {
             currentMapView = newMapView;
-            printMap(currentMapView); // Imprimir la vista actualizada del mapa
+            system("cls");
+            map.PrintView(ash);
         }
 
         Sleep(100);

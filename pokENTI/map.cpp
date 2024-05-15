@@ -7,12 +7,9 @@ maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, fa
 Map::~Map() {
     delete[] mapPokeList;
     delete[] pokeballList;
-
     delete[] zones_unlocked;
 
-    for (int i = 0; i < mapWidth; ++i) {
-        delete[] map[i];
-    }
+    for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
     delete[] map;
 }
 
@@ -45,21 +42,18 @@ void Map::LoadMapSettings(const std::string filename) {
             std::istringstream iss(line);
             char delimiter;
             iss >> pikachuPower;
-            std::cout << "Poder Pikachu -> " << pikachuPower << std::endl;
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
             iss >> healthPokemons >> delimiter >> healthMewtwo;
-            std::cout << "Vida Pokemon -> " << healthPokemons << " Vida Mewtwo -> " << healthMewtwo << std::endl;
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
             char delimiter;
             iss >> minTimeMovePokemon >> delimiter >> maxTimeMovePokemon;
-            std::cout << "Tiempo minimo movimiento pokemon -> " << minTimeMovePokemon << " Maximo -> " << maxTimeMovePokemon << std::endl;
         }
 
         file.close();
@@ -197,17 +191,12 @@ void Map::SpawnPokemon(int p_zone) {
 }
 
 void Map::UpdatePokemonMovement() {
-    for (int i = 0; i < currentPokemonAmount; ++i) {
-        // Obtener las coordenadas del Pokémon actual
+    for (int i = 0; i < currentPokemonAmount; i++) {
         int pokemonX = mapPokeList[i].GetX();
         int pokemonY = mapPokeList[i].GetY();
-
-        // Obtener la zona del Pokémon actual
         int zone = GetCurrentRegion(pokemonX, pokemonY);
 
-        // Si la zona del Pokémon está desbloqueada
         if (IsZoneUnlocked(zone)) {
-            // Actualizar el tiempo de espera y el movimiento del Pokémon
             mapPokeList[i].UpdateMoveWaitTime(minTimeMovePokemon, maxTimeMovePokemon, map, mapWidth, mapHeight);
         }
     }
@@ -232,12 +221,12 @@ void Map::SpawnPokeball(int p_zone) {
     }
 }
 
-int Map::GetCurrentRegion(int x, int y) {
-    if (x < mapWidth / 2) {
-        if (y < mapHeight / 2) { return 0; }
+int Map::GetCurrentRegion(int p_x, int p_y) {
+    if (p_x < mapWidth / 2) {
+        if (p_y < mapHeight / 2) { return 0; }
         return 1;
     }
-    else if (y < mapHeight / 2) { return 3; }
+    else if (p_y < mapHeight / 2) { return 3; }
     return 2;
 }
 

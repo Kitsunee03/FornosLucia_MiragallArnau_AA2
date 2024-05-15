@@ -7,7 +7,7 @@ class Pokemon {
 private:
     int x;
     int y;
-    int moveWaitTime;
+    float moveWaitTime;
 public:
     Pokemon(int initialX, int initialY);
     Pokemon();
