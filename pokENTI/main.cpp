@@ -1,4 +1,6 @@
-#include "includes.h"
+﻿#include "includes.h"
+
+enum class SCENE { MAIN_MENU, MAP, COMBAT, END_MENU };
 
 void movementInput(Player& p_ash, Map& p_map) {
     bool reprint = false;
@@ -65,29 +67,91 @@ void captureInput(Player& p_ash, Map& p_map) {
     }
 }
 
+void mainTitleText() {
+    std::cout << "      ....      ..                       ..            ..      .                        s       .      " << std::endl;
+    std::cout << "    +^\"\"888h. ~\"888h               < .z@8\"`         x88f` `..x88. .>                   :8      @88>    " << std::endl;
+    std::cout << "   8X.  ?8888X  8888f         u.    !@88E         :8888   xf`*8888%     u.    u.      .88      %8P     " << std::endl;
+    std::cout << "  '888x  8888X  8888~   ...ue888b   '888E   u    :8888f .888  `\"`     x@88k u@88c.   :888ooo    .      " << std::endl;
+    std::cout << "  '88888 8888X   \"88x:  888R Y888r   888E u@8NL  88888' X8888. >\"8x  ^\"8888\"\"8888\" -*8888888  .@88u    " << std::endl;
+    std::cout << "   `8888 8888X  X88x.   888R I888>   888E`\"88*\"  88888  ?88888< 888>   8888  888R    8888    \''888E`   " << std::endl;
+    std::cout << "     `*` 8888X '88888X  888R I888>   888E .dN.   88888   \"88888 \"8%    8888  888R    8888      888E    " << std::endl;
+    std::cout << "    ~`...8888X  \"88888  888R I888>   888E~8888   88888 '  `8888>       8888  888R    8888      888E    " << std::endl;
+    std::cout << "     x8888888X.   `%8\" u8888cJ888    888E '888&  `8888> %  X88!        8888  888R   .8888Lu=   888E    " << std::endl;
+    std::cout << "    '%\"*8888888h.   \"   \"*888*P\"     888E  9888.  `888X  `~\"\"`   :    \"*88*\" 8888\"  ^%888*     888&    " << std::endl;
+    std::cout << "    ~    888888888!`      'Y\"      '\"888*\" 4888\"    \"88k.      .~       \"\"   'Y\"      'Y\"      R888\"   " << std::endl;
+    std::cout << "         X888^\"\"\"                     \"\"    \"\"        `\"\"*==~~`                                 \"\"     " << std::endl;
+    std::cout << "         `88f                                                                                          " << std::endl;
+    std::cout << "          88'                                                                                          " << std::endl;
+    std::cout << "          88                                                                                           " << std::endl;
+    std::cout << "          \"\"                                                                                           " << std::endl;
+    std::cout << "|-----------------------------------------------------------------------------------------------------|" << std::endl;
+}
+void mainTitleMenu(bool p_option) {
+    system("cls");
+    mainTitleText();
+    switch (p_option)
+    {
+    case false:
+        std::cout << "                                          --> Start Game <--\n" << std::endl;
+        std::cout << "                                                 Exit" << std::endl;
+        break;
+    case true:
+        std::cout << "                                              Start Game\n" << std::endl;
+        std::cout << "                                             --> Exit <--" << std::endl;
+        break;
+    }
+}
+
 int main() {
     srand(time(NULL));
+
+    SCENE currentScene = SCENE::MAIN_MENU;
     Map map;
     map.LoadMapSettings("config.txt");
     Player ash(2, 2);
 
     map.generateMap(ash);
     std::string currentMapView = map.GetMapView(ash);
-    map.PrintView(ash);
+    std::string newMapView = "nothing yet";
+
+    bool mainMenuOption = false;
+    mainTitleMenu(mainMenuOption);
 
     bool gameOver = false;
     while (!gameOver) {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { gameOver = true; }
 
-        movementInput(ash, map);
-        map.UpdatePokemonMovement();
-        captureInput(ash, map);
+        switch (currentScene)
+        {
+        case SCENE::MAIN_MENU:
+            if (GetAsyncKeyState(VK_SPACE) & 0x8000 || GetAsyncKeyState(VK_RETURN) & 0x8000) {
+                if (mainMenuOption) { gameOver = true; }
+                else { currentScene = SCENE::MAP; }
+            }
+            else if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8000) {
+                mainMenuOption = !mainMenuOption;
+                mainTitleMenu(mainMenuOption);
+            }
+            break;
+        case SCENE::MAP:
+            movementInput(ash, map);
+            map.UpdatePokemonMovement();
+            captureInput(ash, map);
 
-        std::string newMapView = map.GetMapView(ash);
-        if (newMapView != currentMapView) {
-            currentMapView = newMapView;
-            system("cls");
-            map.PrintView(ash);
+            newMapView = map.GetMapView(ash);
+            if (newMapView != currentMapView) {
+                currentMapView = newMapView;
+                system("cls");
+                map.PrintView(ash);
+            }
+
+            break;
+        case SCENE::COMBAT:
+            break;
+        case SCENE::END_MENU:
+            break;
+        default:
+            break;
         }
 
         Sleep(100);
