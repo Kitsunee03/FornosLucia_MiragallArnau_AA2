@@ -22,7 +22,7 @@ int Player::GetY() { return y; }
 int Player::PokemonAmount() { return pokemonAmount; }
 int Player::PokeBallAmount() { return pokeBallAmount; }
 
-char Player::GetDirection() { return direction; }
+char Player::GetDirection() const { return direction; }
 void Player::SetDirection(char dir) { direction = dir; }
 
 void Player::AddPokemon(Pokemon p_pokemon) { pokeList[pokemonAmount++] = p_pokemon; }

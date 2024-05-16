@@ -16,7 +16,7 @@ public:
     int GetX();
     int GetY();
     void Move(int newX, int newY);
-    void UpdateMoveWaitTime(int minTime, int maxTime, CELL** map, int mapWidth, int mapHeight);
+    void UpdateMoveWaitTime(int minTime, int maxTime, CELL**& map, int mapWidth, int mapHeight);
 };
 
 #endif

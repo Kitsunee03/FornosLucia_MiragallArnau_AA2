@@ -41,15 +41,18 @@ public:
     bool IsZoneUnlocked(int zone);
     void ZoneLockUpdate(Player& player);
 
+    char CellToChar(CELL p_cellType, char p_playerChar);
     CELL GetCellType(int x, int y);
     void SetCellTypeAt(int x, int y, CELL newCellType);
-    char CellToChar(CELL p_cellType, Player p_player);
 
     void PrintView(Player& player);
     void generateMap(Player& player);
     std::string GetMapView(Player& p_player);
     int currentPokemonAmount = 0;
-    void SpawnPokemon(int p_zone);
+
+    void SpawnPokemon(int p_zone, int p_index);
+    void RespawnPokemon(Pokemon& p_pokemon);
+
     void SpawnPokeball(int p_zone);
     void UpdatePokemonMovement();
     int GetCurrentRegion(int x, int y);

@@ -19,7 +19,7 @@ public:
     void Move(int dx, int dy);
     int GetX();
     int GetY();
-    char GetDirection();
+    char GetDirection() const;
     void SetDirection(char dir);
 
     void AddPokemon(Pokemon p_pokemon);    

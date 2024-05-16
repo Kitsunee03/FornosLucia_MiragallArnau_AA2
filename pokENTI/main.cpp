@@ -50,10 +50,7 @@ void captureInput(Player& p_ash, Map& p_map) {
 
         Pokemon poke = p_map.GetPokemonInRange(p_ash);
         p_ash.AddPokemon(poke);
-        p_map.SetCellTypeAt(poke.GetX(), poke.GetY(), CELL::EMPTY);
-        p_map.setCurrentPokemonAmount( p_map.getCurrentPokemonAmount() - 1 );
-        p_map.SpawnPokemon(p_map.GetCurrentRegion(p_ash.GetX(), p_ash.GetY()));
-
+        p_map.RespawnPokemon(poke);
         reprint = true;
     }
 
@@ -108,6 +105,10 @@ int main() {
     Player ash(2, 2);
 
     map.generateMap(ash);
+
+    const int player_x = ash.GetX();
+    const int player_y = ash.GetY();
+
     std::string currentMapView = map.GetMapView(ash);
     std::string newMapView = "nothing yet";
 
@@ -123,7 +124,10 @@ int main() {
         case SCENE::MAIN_MENU:
             if (GetAsyncKeyState(VK_SPACE) & 0x8000 || GetAsyncKeyState(VK_RETURN) & 0x8000) {
                 if (mainMenuOption) { gameOver = true; }
-                else { currentScene = SCENE::MAP; }
+                else { 
+                    currentScene = SCENE::MAP; 
+                    map.PrintView(ash);
+                }
             }
             else if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8000) {
                 mainMenuOption = !mainMenuOption;
@@ -132,8 +136,8 @@ int main() {
             break;
         case SCENE::MAP:
             movementInput(ash, map);
-            map.UpdatePokemonMovement();
             captureInput(ash, map);
+            map.UpdatePokemonMovement();
    
             newMapView = map.GetMapView(ash);
             if (newMapView != currentMapView) {

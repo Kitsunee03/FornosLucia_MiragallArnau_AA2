@@ -14,7 +14,7 @@ void Pokemon::Move(int newX, int newY) {
     y = newY;
 }
 
-void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL** map, int mapWidth, int mapHeight) {
+void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL**& map, int mapWidth, int mapHeight) {
     moveWaitTime -= 0.1f;
     if (moveWaitTime <= 0) {
         int deltaX = (rand() % 3) - 1;
@@ -27,7 +27,7 @@ void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL** map, int mapWi
             if (map[newX][newY] == CELL::EMPTY) {
                 map[x][y] = CELL::EMPTY;
                 Move(newX, newY);
-                map[newX][newY] = CELL::POKEMON;
+                map[x][y] = CELL::POKEMON;
             }
         }
 

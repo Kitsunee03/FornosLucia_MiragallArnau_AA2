@@ -80,40 +80,40 @@ void Map::ZoneLockUpdate(Player& player) {
     }
 }
 
+char Map::CellToChar(CELL p_cellType, char p_playerDir) {
+    char result = '?';
+    switch (p_cellType)
+    {
+    case CELL::INVALID:
+        result = ',';
+        break;
+    case CELL::EMPTY:
+        result = '.';
+        break;
+    case CELL::WALL:
+        result = 'X';
+        break;
+    case CELL::POKEMON:
+        result = 'P';
+        break;
+    case CELL::POKEBALL:
+        result = 'O';
+        break;
+    case CELL::PLAYER:
+        result = p_playerDir;
+        break;
+    default:
+        result = '?';
+        break;
+    }
+    return result;
+}
+
 CELL Map::GetCellType(int p_x, int p_y) {
     if (p_x >= 0 && p_x < mapWidth && p_y >= 0 && p_y < mapHeight) { return map[p_x][p_y]; }
     return CELL::INVALID;
 }
 void Map::SetCellTypeAt(int p_x, int p_y, CELL p_newCellType) { map[p_x][p_y] = p_newCellType; }
-
-char Map::CellToChar(CELL p_cellType, Player p_player) {
-    char result = '?';
-    switch (p_cellType)
-    {
-    case CELL::INVALID:    
-        result = ','; 
-        break;
-    case CELL::EMPTY:      
-        result = '.'; 
-        break;
-    case CELL::WALL:
-        result = 'X';
-        break;
-    case CELL::POKEMON:    
-        result = 'P'; 
-        break;
-    case CELL::POKEBALL:   
-        result = 'O'; 
-        break;
-    case CELL::PLAYER:     
-        result = p_player.GetDirection(); 
-        break;
-    default:               
-        result = '?'; 
-        break;
-    }
-    return result;
-}
 
 void Map::PrintView(Player& p_player) {
     const int player_x = p_player.GetX();
@@ -122,8 +122,9 @@ void Map::PrintView(Player& p_player) {
     system("cls");
 
     for (int i = player_x - regionSize / 2; i < player_x + regionSize / 2; i++) {
-        for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) { 
-            std::cout << CellToChar(GetCellType(i, j), p_player);
+        for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) {
+            const char mapChar = CellToChar(GetCellType(i, j), p_player.GetDirection());
+            std::cout << mapChar;
         }
         std::cout << std::endl;
     }
@@ -170,8 +171,11 @@ void Map::generateMap(Player& p_player) {
         }
     }
 
-    for (int i = 0; i < pokemonInPuebloPaleta; i++) { SpawnPokemon(0); }
-    for (int i = 0; i < pokemonInBosque; i++) { SpawnPokemon(1); }
+    for (int i = 0; i < pokemonInPuebloPaleta + pokemonInBosque; i++) {
+        if (i < pokemonInPuebloPaleta) { SpawnPokemon(0, i); }
+        else { SpawnPokemon(1, i); }
+    }
+
     SpawnPokeball(0);
     SpawnPokeball(1);
 }
@@ -181,20 +185,20 @@ std::string Map::GetMapView(Player& p_player) {
     const int player_y = p_player.GetY();
     const int p_regionSize = regionSize;
 
-    std::string mapView;
+    std::string mapView = "";
     for (int i = player_x - p_regionSize / 2; i < player_x + p_regionSize / 2; i++) {
         for (int j = player_y - p_regionSize / 2; j < player_y + p_regionSize / 2; j++) {
-            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {         
-                mapView += CellToChar(GetCellType(i, j), p_player);
+            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) { 
+                mapView += CellToChar(GetCellType(i, j), p_player.GetDirection());
             }
         }
     }
-
     return mapView;
 }
 
-void Map::SpawnPokemon(int p_zone) {
+void Map::SpawnPokemon(int p_zone, int p_index) {
     if (currentPokemonAmount >= MAX_POKEMON_AMOUNT) { return; }
+    currentPokemonAmount++;
 
     int xOffset = (p_zone == 2 || p_zone == 3) ? 1 : 0;
     int yOffset = (p_zone == 1 || p_zone == 3) ? 1 : 0;
@@ -207,9 +211,28 @@ void Map::SpawnPokemon(int p_zone) {
         yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
 
         if (GetCellType(xPos, yPos) == CELL::EMPTY) {
-            mapPokeList[currentPokemonAmount++] = Pokemon(xPos, yPos);
+            mapPokeList[p_index] = Pokemon(xPos, yPos);
             SetCellTypeAt(xPos, yPos, CELL::POKEMON);
             hasSpawned = true;
+        }
+    }
+}
+
+void Map::RespawnPokemon(Pokemon& p_pokemon) {
+    int xOffset = (p_pokemon.GetX() >= mapWidth / 2) ? 1 : 0;
+    int yOffset = (p_pokemon.GetY() >= mapHeight / 2) ? 1 : 0;
+
+    bool hasBeenMoved = false;
+    int xPos = 0, yPos = 0;
+    while (!hasBeenMoved) {
+        xPos = rand() % (mapWidth / 2) + (mapWidth / 2) * xOffset;
+        yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
+
+        if (GetCellType(xPos, yPos) == CELL::EMPTY) {
+            map[p_pokemon.GetX()][p_pokemon.GetY()] = CELL::EMPTY;
+            p_pokemon.Move(xPos, yPos);
+            map[p_pokemon.GetX()][p_pokemon.GetY()] = CELL::POKEMON;
+            hasBeenMoved = true;
         }
     }
 }
