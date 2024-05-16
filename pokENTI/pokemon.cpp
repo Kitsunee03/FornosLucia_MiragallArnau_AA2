@@ -4,6 +4,7 @@ Pokemon::Pokemon(int initialX, int initialY) : x(initialX), y(initialY), moveWai
 
 }
 Pokemon::Pokemon() {
+    moveWaitTime = .0f;
 	x = 0;
 	y = 0;
 }
@@ -13,8 +14,8 @@ void Pokemon::Move(int newX, int newY) {
     y = newY;
 }
 
-void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, char** map, int mapWidth, int mapHeight) {
-    moveWaitTime -= 0.1;
+void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL** map, int mapWidth, int mapHeight) {
+    moveWaitTime -= 0.1f;
     if (moveWaitTime <= 0) {
         int deltaX = (rand() % 3) - 1;
         int deltaY = (rand() % 3) - 1;
@@ -23,16 +24,14 @@ void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, char** map, int mapWi
         int newY = y + deltaY;
 
         if (newX >= 0 && newX < mapWidth && newY >= 0 && newY < mapHeight) {
-            if (map[newX][newY] == '.') {
-                char originalChar = map[x][y];
-                map[x][y] = '.';
-
+            if (map[newX][newY] == CELL::EMPTY) {
+                map[x][y] = CELL::EMPTY;
                 Move(newX, newY);
-                map[newX][newY] = originalChar;
+                map[newX][newY] = CELL::POKEMON;
             }
         }
 
-        moveWaitTime = rand() % (maxTime - minTime + 1) + minTime;
+        moveWaitTime = float(rand() % (maxTime - minTime + 1) + minTime);
     }
 }
 

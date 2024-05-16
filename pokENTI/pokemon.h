@@ -2,6 +2,7 @@
 #define POKEMON_H
 
 #include "random"
+#include "enums.h"
 
 class Pokemon {
 private:
@@ -15,7 +16,7 @@ public:
     int GetX();
     int GetY();
     void Move(int newX, int newY);
-    void UpdateMoveWaitTime(int minTime, int maxTime, char** map, int mapWidth, int mapHeight);
+    void UpdateMoveWaitTime(int minTime, int maxTime, CELL** map, int mapWidth, int mapHeight);
 };
 
 #endif

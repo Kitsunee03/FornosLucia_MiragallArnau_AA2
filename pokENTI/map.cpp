@@ -18,41 +18,37 @@ void Map::LoadMapSettings(const std::string filename) {
     if (file.is_open()) {
         std::string line;
 
+        char delimiter;
         if (std::getline(file, line)) {
             std::istringstream iss(line);
-            char delimiter;
+            
             iss >> mapWidth >> delimiter >> mapHeight;
-            map = new char* [mapWidth];
-            for (int i = 0; i < mapWidth; i++) { map[i] = new char[mapHeight]; }
+            map = new CELL* [mapWidth];
+            for (int i = 0; i < mapWidth; i++) { map[i] = new CELL[mapHeight]; }
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
-            char delimiter;
             iss >> pokemonInPuebloPaleta >> delimiter >> requiredPokemonForBosque;
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
-            char delimiter;
             iss >> pokemonInBosque >> delimiter >> pokemonRequiredForCuevaCeleste;
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
-            char delimiter;
             iss >> pikachuPower;
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
-            char delimiter;
             iss >> healthPokemons >> delimiter >> healthMewtwo;
         }
 
         if (std::getline(file, line)) {
             std::istringstream iss(line);
-            char delimiter;
             iss >> minTimeMovePokemon >> delimiter >> maxTimeMovePokemon;
         }
 
@@ -72,30 +68,63 @@ bool Map::IsZoneUnlocked(int p_zone) {
 void Map::ZoneLockUpdate(Player& player) {
     if (!IsZoneUnlocked(1) && player.PokemonAmount() >= requiredPokemonForBosque) { 
         for (int i = 1; i < mapWidth / 2; i++) {
-            SetCharAt(i, mapHeight / 2, '.'); 
+            SetCellTypeAt(i, mapHeight / 2, CELL::EMPTY); 
         }
         zones_unlocked[1] = true; 
     }
     else if (!IsZoneUnlocked(2) && player.PokemonAmount() >= pokemonRequiredForCuevaCeleste) { 
         for (int i = mapHeight / 2 + 1; i < mapHeight -1; i++) {
-            SetCharAt(mapWidth / 2, i, '.'); 
+            SetCellTypeAt(mapWidth / 2, i, CELL::EMPTY); 
         }
         zones_unlocked[2] = true; 
     }
 }
 
-char Map::GetCharAt(int p_x, int p_y) {
+CELL Map::GetCellType(int p_x, int p_y) {
     if (p_x >= 0 && p_x < mapWidth && p_y >= 0 && p_y < mapHeight) { return map[p_x][p_y]; }
-    return ',';
+    return CELL::INVALID;
 }
-void Map::SetCharAt(int p_x, int p_y, char p_newChar) { map[p_x][p_y] = p_newChar; }
+void Map::SetCellTypeAt(int p_x, int p_y, CELL p_newCellType) { map[p_x][p_y] = p_newCellType; }
+
+char Map::CellToChar(CELL p_cellType, Player p_player) {
+    char result = '?';
+    switch (p_cellType)
+    {
+    case CELL::INVALID:    
+        result = ','; 
+        break;
+    case CELL::EMPTY:      
+        result = '.'; 
+        break;
+    case CELL::WALL:
+        result = 'X';
+        break;
+    case CELL::POKEMON:    
+        result = 'P'; 
+        break;
+    case CELL::POKEBALL:   
+        result = 'O'; 
+        break;
+    case CELL::PLAYER:     
+        result = p_player.GetDirection(); 
+        break;
+    default:               
+        result = '?'; 
+        break;
+    }
+    return result;
+}
 
 void Map::PrintView(Player& p_player) {
     const int player_x = p_player.GetX();
     const int player_y = p_player.GetY();
 
+    system("cls");
+
     for (int i = player_x - regionSize / 2; i < player_x + regionSize / 2; i++) {
-        for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) { std::cout << GetCharAt(i, j); }
+        for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) { 
+            std::cout << CellToChar(GetCellType(i, j), p_player);
+        }
         std::cout << std::endl;
     }
 
@@ -134,10 +163,10 @@ void Map::generateMap(Player& p_player) {
         for (int j = 0; j < mapHeight; j++) {
             if (i == 0 || i == mapWidth - 1 || i == quadrantWidth ||
                 j == 0 || j == mapHeight - 1 || j == quadrantHeight) {
-                map[i][j] = 'X';
+                map[i][j] = CELL::WALL;
             }
-            else if (i == player_y && j == player_x) { map[i][j] = 'v'; }
-            else { map[i][j] = '.'; }
+            else if (i == player_y && j == player_x) { map[i][j] = CELL::PLAYER; }
+            else { map[i][j] = CELL::EMPTY; }
         }
     }
 
@@ -155,12 +184,10 @@ std::string Map::GetMapView(Player& p_player) {
     std::string mapView;
     for (int i = player_x - p_regionSize / 2; i < player_x + p_regionSize / 2; i++) {
         for (int j = player_y - p_regionSize / 2; j < player_y + p_regionSize / 2; j++) {
-            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
-                mapView += GetCharAt(i, j);
+            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {         
+                mapView += CellToChar(GetCellType(i, j), p_player);
             }
-            else { mapView += ','; }
         }
-        mapView += '\n';
     }
 
     return mapView;
@@ -179,9 +206,9 @@ void Map::SpawnPokemon(int p_zone) {
         xPos = rand() % (mapWidth / 2) + (mapWidth / 2) * xOffset;
         yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
 
-        if (GetCharAt(xPos, yPos) == '.') {
+        if (GetCellType(xPos, yPos) == CELL::EMPTY) {
             mapPokeList[currentPokemonAmount++] = Pokemon(xPos, yPos);
-            SetCharAt(xPos, yPos, 'P');
+            SetCellTypeAt(xPos, yPos, CELL::POKEMON);
             hasSpawned = true;
         }
     }
@@ -210,9 +237,9 @@ void Map::SpawnPokeball(int p_zone) {
         xPos = rand() % (mapWidth / 2) + (mapWidth / 2) * xOffset;
         yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
 
-        if (GetCharAt(xPos, yPos) == '.') {
+        if (GetCellType(xPos, yPos) == CELL::EMPTY) {
             pokeballList[currentPokeBallsAmount++] = PokeBall(xPos, yPos);
-            SetCharAt(xPos,yPos,'O');
+            SetCellTypeAt(xPos,yPos, CELL::POKEBALL);
             hasSpawned = true;
         }
     }
@@ -231,7 +258,7 @@ int Map::GetCurrentRegion(int p_x, int p_y) {
 Pokemon Map::GetPokemonInRange(Player& p_player) {
     for (int i = p_player.GetX() - 1; i < p_player.GetX() + 2; i++) {
         for (int j = p_player.GetY() - 1; j < p_player.GetY() + 2; j++) {
-            if (i > -1 && i<mapWidth && j>-1 && j < mapHeight && map[i][j] == 'P') {
+            if (i > -1 && i<mapWidth && j>-1 && j < mapHeight && map[i][j] == CELL::POKEMON) {
                 for (int k = 0; k < currentPokemonAmount; k++)
                 {
                     if (mapPokeList[k].GetX() == i && mapPokeList[k].GetY() == j) { return mapPokeList[k]; }
@@ -246,7 +273,7 @@ Pokemon Map::GetPokemonInRange(Player& p_player) {
 PokeBall Map::GetPokeBallIntRange(Player& p_player) {
     for (int i = p_player.GetX() - 1; i <= p_player.GetX() + 1; i++) {
         for (int j = p_player.GetY() - 1; j <= p_player.GetY() + 1; j++) {
-            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight && map[i][j] == 'O') {
+            if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight && map[i][j] == CELL::POKEBALL) {
                 return PokeBall(i, j);
             }
         }

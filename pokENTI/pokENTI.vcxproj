@@ -134,6 +134,7 @@
     <ClCompile Include="pokemon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="enums.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="player.h" />

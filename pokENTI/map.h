@@ -8,12 +8,13 @@
 #include "pokemon.h"
 #include "pokeBall.h"
 #include "player.h"
+#include "enums.h"
 
 class Player;
 
 class Map {
 private:
-    char** map;
+    CELL** map;
     int mapWidth = 0;
     int mapHeight = 0;
     int regionSize = 25;
@@ -40,8 +41,9 @@ public:
     bool IsZoneUnlocked(int zone);
     void ZoneLockUpdate(Player& player);
 
-    char GetCharAt(int x, int y);
-    void SetCharAt(int x, int y, char newChar);
+    CELL GetCellType(int x, int y);
+    void SetCellTypeAt(int x, int y, CELL newCellType);
+    char CellToChar(CELL p_cellType, Player p_player);
 
     void PrintView(Player& player);
     void generateMap(Player& player);

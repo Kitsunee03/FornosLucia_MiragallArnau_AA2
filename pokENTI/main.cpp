@@ -1,37 +1,35 @@
 ﻿#include "includes.h"
-
-enum class SCENE { MAIN_MENU, MAP, COMBAT, END_MENU };
+#include "enums.h"
 
 void movementInput(Player& p_ash, Map& p_map) {
     bool reprint = false;
-    if (GetAsyncKeyState(VK_UP) & 0x8000 && p_map.GetCharAt(p_ash.GetX() - 1, p_ash.GetY()) == '.') {
+    if (GetAsyncKeyState(VK_UP) & 0x8000 && p_map.GetCellType(p_ash.GetX() - 1, p_ash.GetY()) == CELL::EMPTY) {
         p_ash.SetDirection('^');
-        p_map.SetCharAt(p_ash.GetX(), p_ash.GetY(), '.');
+        p_map.SetCellTypeAt(p_ash.GetX(), p_ash.GetY(), CELL::EMPTY);
         p_ash.Move(-1, 0);
         reprint = true;
     }
-    if (GetAsyncKeyState(VK_DOWN) & 0x8000 && p_map.GetCharAt(p_ash.GetX() + 1, p_ash.GetY()) == '.') {
+    if (GetAsyncKeyState(VK_DOWN) & 0x8000 && p_map.GetCellType(p_ash.GetX() + 1, p_ash.GetY()) == CELL::EMPTY) {
         p_ash.SetDirection('v');
-        p_map.SetCharAt(p_ash.GetX(), p_ash.GetY(), '.');
+        p_map.SetCellTypeAt(p_ash.GetX(), p_ash.GetY(), CELL::EMPTY);
         p_ash.Move(1, 0);
         reprint = true;
     }
-    if (GetAsyncKeyState(VK_LEFT) & 0x8000 && p_map.GetCharAt(p_ash.GetX(), p_ash.GetY() - 1) == '.') {
+    if (GetAsyncKeyState(VK_LEFT) & 0x8000 && p_map.GetCellType(p_ash.GetX(), p_ash.GetY() - 1) == CELL::EMPTY) {
         p_ash.SetDirection('<');
-        p_map.SetCharAt(p_ash.GetX(), p_ash.GetY(), '.');
+        p_map.SetCellTypeAt(p_ash.GetX(), p_ash.GetY(), CELL::EMPTY);
         p_ash.Move(0, -1);
         reprint = true;
     }
-    if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && p_map.GetCharAt(p_ash.GetX(), p_ash.GetY() + 1) == '.') {
+    if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && p_map.GetCellType(p_ash.GetX(), p_ash.GetY() + 1) == CELL::EMPTY) {
         p_ash.SetDirection('>');
-        p_map.SetCharAt(p_ash.GetX(), p_ash.GetY(), '.');
+        p_map.SetCellTypeAt(p_ash.GetX(), p_ash.GetY(), CELL::EMPTY);
         p_ash.Move(0, 1);
         reprint = true;
     }
 
     if (reprint) {
-        system("cls");
-        p_map.SetCharAt(p_ash.GetX(), p_ash.GetY(), p_ash.GetDirection());
+        p_map.SetCellTypeAt(p_ash.GetX(), p_ash.GetY(), CELL::PLAYER);
         p_map.PrintView(p_ash);
         reprint = false;
     }
@@ -42,7 +40,7 @@ void captureInput(Player& p_ash, Map& p_map) {
     PokeBall pokeBall = p_map.GetPokeBallIntRange(p_ash);
     if (pokeBall.GetX() != -1) {
         p_ash.AddPokeBall(pokeBall);
-        p_map.SetCharAt(pokeBall.GetX(), pokeBall.GetY(), '.');
+        p_map.SetCellTypeAt(pokeBall.GetX(), pokeBall.GetY(), CELL::EMPTY);
         p_map.SpawnPokeball(p_map.GetCurrentRegion(p_ash.GetX(), p_ash.GetY()));
         reprint = true;
     }
@@ -52,7 +50,7 @@ void captureInput(Player& p_ash, Map& p_map) {
 
         Pokemon poke = p_map.GetPokemonInRange(p_ash);
         p_ash.AddPokemon(poke);
-        p_map.SetCharAt(poke.GetX(), poke.GetY(), '.');
+        p_map.SetCellTypeAt(poke.GetX(), poke.GetY(), CELL::EMPTY);
         p_map.setCurrentPokemonAmount( p_map.getCurrentPokemonAmount() - 1 );
         p_map.SpawnPokemon(p_map.GetCurrentRegion(p_ash.GetX(), p_ash.GetY()));
 
@@ -60,7 +58,6 @@ void captureInput(Player& p_ash, Map& p_map) {
     }
 
     if (reprint) {
-        system("cls");
         p_map.ZoneLockUpdate(p_ash);
         p_map.PrintView(p_ash);
         reprint = false;
@@ -137,11 +134,10 @@ int main() {
             movementInput(ash, map);
             map.UpdatePokemonMovement();
             captureInput(ash, map);
-
+   
             newMapView = map.GetMapView(ash);
             if (newMapView != currentMapView) {
                 currentMapView = newMapView;
-                system("cls");
                 map.PrintView(ash);
             }
 
