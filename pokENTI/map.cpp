@@ -150,11 +150,11 @@ void Map::generateMap(Player& p_player) {
 std::string Map::GetMapView(Player& p_player) {
     const int player_x = p_player.GetX();
     const int player_y = p_player.GetY();
-    const int regionSize = this->regionSize; // Utilizar el mismo tamaño de región que en PrintView
+    const int p_regionSize = regionSize;
 
     std::string mapView;
-    for (int i = player_x - regionSize / 2; i < player_x + regionSize / 2; i++) {
-        for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) {
+    for (int i = player_x - p_regionSize / 2; i < player_x + p_regionSize / 2; i++) {
+        for (int j = player_y - p_regionSize / 2; j < player_y + p_regionSize / 2; j++) {
             if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
                 mapView += GetCharAt(i, j);
             }
