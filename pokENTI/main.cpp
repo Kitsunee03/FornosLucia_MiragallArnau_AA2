@@ -99,24 +99,33 @@ void captureInput(Player& p_ash, Map& p_map) {
 }
 
 void mainTitleText() {
-    std::cout << "      ....      ..                       ..            ..      .                        s       .      " << std::endl;
-    std::cout << "    +^\"\"888h. ~\"888h               < .z@8\"`         x88f` `..x88. .>                   :8      @88>    " << std::endl;
-    std::cout << "   8X.  ?8888X  8888f         u.    !@88E         :8888   xf`*8888%     u.    u.      .88      %8P     " << std::endl;
-    std::cout << "  '888x  8888X  8888~   ...ue888b   '888E   u    :8888f .888  `\"`     x@88k u@88c.   :888ooo    .      " << std::endl;
-    std::cout << "  '88888 8888X   \"88x:  888R Y888r   888E u@8NL  88888' X8888. >\"8x  ^\"8888\"\"8888\" -*8888888  .@88u    " << std::endl;
-    std::cout << "   `8888 8888X  X88x.   888R I888>   888E`\"88*\"  88888  ?88888< 888>   8888  888R    8888    \''888E`   " << std::endl;
-    std::cout << "     `*` 8888X '88888X  888R I888>   888E .dN.   88888   \"88888 \"8%    8888  888R    8888      888E    " << std::endl;
-    std::cout << "    ~`...8888X  \"88888  888R I888>   888E~8888   88888 '  `8888>       8888  888R    8888      888E    " << std::endl;
-    std::cout << "     x8888888X.   `%8\" u8888cJ888    888E '888&  `8888> %  X88!        8888  888R   .8888Lu=   888E    " << std::endl;
-    std::cout << "    '%\"*8888888h.   \"   \"*888*P\"     888E  9888.  `888X  `~\"\"`   :    \"*88*\" 8888\"  ^%888*     888&    " << std::endl;
-    std::cout << "    ~    888888888!`      'Y\"      '\"888*\" 4888\"    \"88k.      .~       \"\"   'Y\"      'Y\"      R888\"   " << std::endl;
-    std::cout << "         X888^\"\"\"                     \"\"    \"\"        `\"\"*==~~`                                 \"\"     " << std::endl;
-    std::cout << "         `88f                                                                                          " << std::endl;
-    std::cout << "          88'                                                                                          " << std::endl;
-    std::cout << "          88                                                                                           " << std::endl;
-    std::cout << "          \"\"                                                                                           " << std::endl;
+    std::cout << "      ....      ..                       ..            ..      .                        s       ." << std::endl;
+    std::cout << "    +^\"\"888h. ~\"888h               < .z@8\"`         x88f` `..x88. .>                   :8      @88>" << std::endl;
+    std::cout << "   8X.  ?8888X  8888f         u.    !@88E         :8888   xf`*8888%     u.    u.      .88      %8P" << std::endl;
+    std::cout << "  '888x  8888X  8888~   ...ue888b   '888E   u    :8888f .888  `\"`     x@88k u@88c.   :888ooo    ." << std::endl;
+    std::cout << "  '88888 8888X   \"88x:  888R Y888r   888E u@8NL  88888' X8888. >\"8x  ^\"8888\"\"8888\" -*8888888  .@88u" << std::endl;
+    std::cout << "   `8888 8888X  X88x.   888R I888>   888E`\"88*\"  88888  ?88888< 888>   8888  888R    8888    \''888E`" << std::endl;
+    std::cout << "     `*` 8888X '88888X  888R I888>   888E .dN.   88888   \"88888 \"8%    8888  888R    8888      888E" << std::endl;
+    std::cout << "    ~`...8888X  \"88888  888R I888>   888E~8888   88888 '  `8888>       8888  888R    8888      888E" << std::endl;
+    std::cout << "     x8888888X.   `%8\" u8888cJ888    888E '888&  `8888> %  X88!        8888  888R   .8888Lu=   888E" << std::endl;
+    std::cout << "    '%\"*8888888h.   \"   \"*888*P\"     888E  9888.  `888X  `~\"\"`   :    \"*88*\" 8888\"  ^%888*     888&" << std::endl;
+    std::cout << "    ~    888888888!`      'Y\"      '\"888*\" 4888\"    \"88k.      .~       \"\"   'Y\"      'Y\"      R888\"" << std::endl;
+    std::cout << "         X888^\"\"\"                     \"\"    \"\"        `\"\"*==~~`                                 \"\"" << std::endl;
+    std::cout << "         `88f" << std::endl;
+    std::cout << "          88'" << std::endl;
+    std::cout << "          88" << std::endl;
+    std::cout << "          \"\"" << std::endl;
     std::cout << "|-----------------------------------------------------------------------------------------------------|" << std::endl;
 }
+void gameOverText() {
+    std::cout << "\n\t      ,-=-.       ______     _" << std::endl;
+    std::cout << "\t     /  +  \\     />----->  _|A|_" << std::endl;
+    std::cout << "\t     | ~~~ |    // -/- /  |_ S _|" << std::endl;
+    std::cout << "\t     |R.I.P|   //  /  /     |H|" << std::endl;
+    std::cout << "\t\\vV,,|_____|V,//_____/VvV,v,|_|/,,vhjwv/," << std::endl;
+    std::cout << "    -------------------------------------------------\n\n" << std::endl;
+}
+
 void mainTitleMenu(bool p_option) {
     system("cls");
     mainTitleText();
@@ -132,6 +141,22 @@ void mainTitleMenu(bool p_option) {
         break;
     }
 }
+void gameOverMenu(bool p_option) {
+    system("cls");
+    gameOverText();
+    switch (p_option)
+    {
+    case false:
+        std::cout << "                   --> Play again <--\n" << std::endl;
+        std::cout << "                          Exit" << std::endl;
+        break;
+    case true:
+        std::cout << "                       Play again\n" << std::endl;
+        std::cout << "                      --> Exit <--" << std::endl;
+        break;
+    }
+}
+
 
 int main() {
     srand(time(NULL));
@@ -187,6 +212,18 @@ int main() {
            
             break;
         case SCENE::END_MENU:
+            if (GetAsyncKeyState(VK_SPACE) & 0x8000 || GetAsyncKeyState(VK_RETURN) & 0x8000) {
+                if (mainMenuOption) { gameOver = true; }
+                else {
+                    currentScene = SCENE::MAP;
+                    map.PrintView(ash);
+                }
+            }
+            else if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8000) {
+                mainMenuOption = !mainMenuOption;
+                gameOverMenu(mainMenuOption);
+            }
+
             break;
         default:
             break;
