@@ -222,6 +222,13 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
     int xOffset = (p_pokemon.GetX() >= mapWidth / 2) ? 1 : 0;
     int yOffset = (p_pokemon.GetY() >= mapHeight / 2) ? 1 : 0;
 
+    //find pokemon on pokemon array to update pos
+    int index = 0;
+    for (; index < currentPokemonAmount; index++)
+    {
+        if (mapPokeList[index].GetX() == p_pokemon.GetX() && mapPokeList[index].GetY() == p_pokemon.GetY()) { break; }
+    }
+
     bool hasBeenMoved = false;
     int xPos = 0, yPos = 0;
     while (!hasBeenMoved) {
@@ -229,9 +236,9 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
         yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
 
         if (GetCellType(xPos, yPos) == CELL::EMPTY) {
-            map[p_pokemon.GetX()][p_pokemon.GetY()] = CELL::EMPTY;
-            p_pokemon.Move(xPos, yPos);
-            map[p_pokemon.GetX()][p_pokemon.GetY()] = CELL::POKEMON;
+            map[mapPokeList[index].GetX()][mapPokeList[index].GetY()] = CELL::EMPTY;
+            mapPokeList[index].Move(xPos, yPos);
+            map[mapPokeList[index].GetX()][mapPokeList[index].GetY()] = CELL::POKEMON;
             hasBeenMoved = true;
         }
     }
