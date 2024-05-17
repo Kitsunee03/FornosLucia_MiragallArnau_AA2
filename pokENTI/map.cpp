@@ -56,6 +56,7 @@ void Map::LoadMapSettings(const std::string filename) {
 
         mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];
         pokeballList = new PokeBall[MAX_POKEBALLS];
+        mapPokeList->setCurrentHealth(healthPokemons);
         MAX_POKEMON_AMOUNT = pokemonInBosque + pokemonInPuebloPaleta;
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
@@ -150,6 +151,7 @@ void Map::PrintView(Player& p_player) {
 
     std::cout << "Ash pokemons -> " << p_player.PokemonAmount() << "\t" << std::endl;
     std::cout << "Ash pokeBalls -> " << p_player.PokeBallAmount() << std::endl;
+    std::cout << GetCurrentRegion(p_player.GetX(), p_player.GetY()) << std::endl;
     std::cout << "------------------------";
 }
 
@@ -224,8 +226,7 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
 
     //find pokemon on pokemon array to update pos
     int index = 0;
-    for (; index < currentPokemonAmount; index++)
-    {
+    for (; index < currentPokemonAmount; index++){
         if (mapPokeList[index].GetX() == p_pokemon.GetX() && mapPokeList[index].GetY() == p_pokemon.GetY()) { break; }
     }
 
@@ -315,5 +316,6 @@ PokeBall Map::GetPokeBallIntRange(Player& p_player) {
 int Map::getWidth() { return mapWidth; }
 int Map::getHeight() { return mapHeight; }
 int Map::getCurrentPokemonAmount() { return currentPokemonAmount; }
+int Map::getPokemonHealth() { return healthPokemons; }
 
 void Map::setCurrentPokemonAmount(int p_currentPokemonAmount) { currentPokemonAmount = p_currentPokemonAmount; }

@@ -7,6 +7,7 @@ Pokemon::Pokemon() {
     moveWaitTime = .0f;
 	x = 0;
 	y = 0;
+    actualHealth = 0;
 }
 
 void Pokemon::Move(int newX, int newY) {
@@ -37,3 +38,6 @@ void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL**& map, int mapW
 
 int Pokemon::GetX() { return x; }
 int Pokemon::GetY() { return y; }
+int Pokemon::GetCurrentHealth() { return actualHealth; }
+
+void Pokemon::setCurrentHealth(int p_currentHealth) { actualHealth = p_currentHealth; }

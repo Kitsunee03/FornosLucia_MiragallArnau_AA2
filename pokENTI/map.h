@@ -63,6 +63,7 @@ public:
     int getWidth();
     int getHeight();
     int getCurrentPokemonAmount();
+    int getPokemonHealth();
 
     void setCurrentPokemonAmount(int p_currentPokemonAmount);
 

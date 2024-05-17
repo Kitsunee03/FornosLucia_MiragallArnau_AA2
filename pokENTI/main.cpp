@@ -1,6 +1,42 @@
 ﻿#include "includes.h"
 #include "enums.h"
 
+SCENE currentScene;
+ACTIONS currentAction;
+
+void uiCombatMenu(ACTIONS p_actions, Map& p_map) {
+    system("cls");
+    std::cout << "  " <<"    ___         __                     ____        __" << std::endl;
+    std::cout << "  " <<"   /   |  _____/ /_     _   _______   / __ \\____  / /_____  ____ ___  ____  ____" << std::endl;
+    std::cout << "  " <<"  / /| | / ___/ __ \\   | | / / ___/  / /_/ / __ \\/ //_/ _ \\/ __ `__ \\/ __ \\/ __ \\" << std::endl;
+    std::cout << "  " <<" / ___ |(__  ) / / /   | |/ (__  )  / ____/ /_/ / ,< /  __/ / / / / / /_/ / / / /" << std::endl;
+    std::cout << "  " <<"/_/  |_/____/_/ /_/    |___/____/  /_/    \\____/_/|_|\\___/_/ /_/ /_/\\____/_/ /_/" << std::endl;
+    
+    std::cout << "\n\n" << std::endl;
+    std::cout << "                                    POKEMON" << "    Health: " << "/" << p_map.getPokemonHealth() << std::endl;
+    std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << std::endl;
+
+    switch (p_actions)
+    {
+    case ACTIONS::FIGHT:
+        std::cout << "                                --> Fight <--\n" << std::endl;
+        std::cout << "                                   Capture\n" << std::endl;
+        std::cout << "                                     Run" << std::endl;
+        break;
+    case ACTIONS::CAPTURE:
+        std::cout << "                                    Fight\n" << std::endl;
+        std::cout << "                                --> Capture <--\n" << std::endl;
+        std::cout << "                                     Run" << std::endl;
+        break;
+    case ACTIONS::RUN:
+        std::cout << "                                    Fight\n" << std::endl;
+        std::cout << "                                    Capture\n" << std::endl;
+        std::cout << "                                  --> Run <--" << std::endl;
+        break;
+    }
+
+}
+
 void movementInput(Player& p_ash, Map& p_map) {
     bool reprint = false;
     if (GetAsyncKeyState(VK_UP) & 0x8000 && p_map.GetCellType(p_ash.GetX() - 1, p_ash.GetY()) == CELL::EMPTY) {
@@ -47,11 +83,12 @@ void captureInput(Player& p_ash, Map& p_map) {
 
     if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
         if (p_map.GetPokemonInRange(p_ash).GetX() == -1) { return; }
-
-        Pokemon poke = p_map.GetPokemonInRange(p_ash);
+        currentScene = SCENE::COMBAT;
+        uiCombatMenu(currentAction, p_map);
+        /*Pokemon poke = p_map.GetPokemonInRange(p_ash);
         p_ash.AddPokemon(poke);
         p_map.RespawnPokemon(poke);
-        reprint = true;
+        reprint = true;*/
     }
 
     if (reprint) {
@@ -99,7 +136,7 @@ void mainTitleMenu(bool p_option) {
 int main() {
     srand(time(NULL));
 
-    SCENE currentScene = SCENE::MAIN_MENU;
+    currentScene = SCENE::MAIN_MENU;
     Map map;
     map.LoadMapSettings("config.txt");
     Player ash(2, 2);
@@ -147,6 +184,7 @@ int main() {
 
             break;
         case SCENE::COMBAT:
+           
             break;
         case SCENE::END_MENU:
             break;
