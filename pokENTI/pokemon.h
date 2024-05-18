@@ -17,6 +17,7 @@ public:
     int GetX();
     int GetY();
     int GetCurrentHealth();
+    void ReduceHealth(int damage);
     void setCurrentHealth(int p_currentHealth);
     void Move(int newX, int newY);
     void UpdateMoveWaitTime(int minTime, int maxTime, CELL**& map, int mapWidth, int mapHeight);

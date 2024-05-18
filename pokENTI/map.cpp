@@ -56,7 +56,9 @@ void Map::LoadMapSettings(const std::string filename) {
 
         mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];
         pokeballList = new PokeBall[MAX_POKEBALLS];
-        mapPokeList->setCurrentHealth(healthPokemons);
+        for (int i = 0; i < pokemonInPuebloPaleta + pokemonInBosque; ++i) {
+            mapPokeList[i].setCurrentHealth(healthPokemons);
+        }
         MAX_POKEMON_AMOUNT = pokemonInBosque + pokemonInPuebloPaleta;
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
@@ -122,22 +124,23 @@ void Map::PrintView(Player& p_player) {
 
     system("cls");
 
+    std::cout << "------------------------" << std::endl;
+    std::cout << "Ash pokemons -> " << p_player.PokemonAmount() << "  " << "Ash pokeBalls -> " << p_player.PokeBallAmount() << std::endl;
+    std::cout << "Current Region -> " << GetCurrentRegion(p_player.GetX(), p_player.GetY()) << std::endl;
+
+    if (GetCurrentRegion(p_player.GetX(), p_player.GetY()) == 0) {
+        std::cout << "Current Region -> " <<  "Pueblo Paleta" << std::endl;
+    }
+    else if (GetCurrentRegion(p_player.GetX(), p_player.GetY()) == 1) {
+        std::cout << "Current Region -> " << "The forest" << std::endl;
+    }
+
     for (int i = player_x - regionSize / 2; i < player_x + regionSize / 2; i++) {
         for (int j = player_y - regionSize / 2; j < player_y + regionSize / 2; j++) {
             const char mapChar = CellToChar(GetCellType(i, j), p_player.GetDirection());
             std::cout << mapChar;
         }
         std::cout << std::endl;
-    }
-
-    std::cout << "------------------------" << std::endl;
-    std::cout << "Width -> " << mapWidth << " Height -> " << mapHeight << std::endl;
-
-    if (GetCurrentRegion(p_player.GetX(), p_player.GetY()) == 0) {
-        std::cout << "Pokemons at Pueblo Paleta -> " << pokemonInPuebloPaleta << std::endl;
-    }
-    else if (GetCurrentRegion(p_player.GetX(), p_player.GetY()) == 1) {
-        std::cout << "Pokemons at the forest -> " << pokemonInBosque << std::endl;
     }
 
     if (!IsZoneUnlocked(1)) {
@@ -149,9 +152,6 @@ void Map::PrintView(Player& p_player) {
             << " left to unlock celest cave" << std::endl;
     }
 
-    std::cout << "Ash pokemons -> " << p_player.PokemonAmount() << "\t" << std::endl;
-    std::cout << "Ash pokeBalls -> " << p_player.PokeBallAmount() << std::endl;
-    std::cout << GetCurrentRegion(p_player.GetX(), p_player.GetY()) << std::endl;
     std::cout << "------------------------";
 }
 
@@ -244,6 +244,50 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
         }
     }
 }
+
+
+bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
+    if (p_ash.PokeBallAmount() <= 0) {
+        std::cout << "No tienes suficientes Pokéballs." << std::endl;
+        return false;
+    }
+
+    p_ash.UsePokeBall();
+
+    float maxHealth = static_cast<float>(healthPokemons);
+    float currentHealth = static_cast<float>(p_pokemon.GetCurrentHealth());
+    float healthRatio = currentHealth / maxHealth;
+
+    float baseProbability = 0.5f; 
+
+    float captureProbability = baseProbability + (1.0f - baseProbability) / (1.0f + std::exp(-8.0f * (healthRatio - 0.7f)));
+
+    float randomValue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+    std::cout << "Salud actual del Pokémon: " << p_pokemon.GetCurrentHealth() << "/" << healthPokemons << std::endl;
+    std::cout << "Pokéballs restantes: " << p_ash.PokeBallAmount() << std::endl;
+    std::cout << "Probabilidad de captura: " << captureProbability * 100 << "%" << std::endl;
+    std::cout << "Valor aleatorio: " << randomValue << std::endl;
+
+    if (randomValue < captureProbability) {
+        return true;
+    }
+
+    return false;
+}
+
+void Map::ApplyDamageToPokemon(Pokemon& p_pokemon) {
+    p_pokemon.ReduceHealth(pikachuPower);
+
+    if (p_pokemon.GetCurrentHealth() <= 0) {
+        std::cout << "¡El Pokémon ha sido debilitado!" << std::endl;
+    }
+    else {
+        std::cout << "El Pokémon ha recibido " << pikachuPower << " puntos de daño." << std::endl;
+        std::cout << "Salud restante del Pokémon: " << p_pokemon.GetCurrentHealth() << std::endl;
+    }
+}
+
 
 void Map::UpdatePokemonMovement() {
     for (int i = 0; i < currentPokemonAmount; i++) {

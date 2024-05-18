@@ -34,7 +34,29 @@ void uiCombatMenu(ACTIONS p_actions, Map& p_map) {
         std::cout << "                                  --> Run <--" << std::endl;
         break;
     }
+}
 
+void combatOptions(Player& p_ash, Map& p_map) {
+    Pokemon poke = p_map.GetPokemonInRange(p_ash);
+    switch (currentAction) {
+    case ACTIONS::FIGHT:
+        // PORQUE NO DA LA VIDA DEL POKEMON
+        std::cout << poke.GetCurrentHealth();
+        //p_map.ApplyDamageToPokemon(p_map.GetPokemonInRange(p_ash));
+        break;
+    case ACTIONS::CAPTURE:
+        if (p_map.AttemptCapture(p_ash, poke)){
+            p_ash.AddPokemon(poke);
+            p_map.RespawnPokemon(poke);
+            currentScene = SCENE::MAP;
+            p_map.PrintView(p_ash);
+        }
+        break;
+    case ACTIONS::RUN:
+        currentScene = SCENE::MAP;
+        p_map.PrintView(p_ash);
+        break;
+    }
 }
 
 void movementInput(Player& p_ash, Map& p_map) {
@@ -85,10 +107,6 @@ void captureInput(Player& p_ash, Map& p_map) {
         if (p_map.GetPokemonInRange(p_ash).GetX() == -1) { return; }
         currentScene = SCENE::COMBAT;
         uiCombatMenu(currentAction, p_map);
-        /*Pokemon poke = p_map.GetPokemonInRange(p_ash);
-        p_ash.AddPokemon(poke);
-        p_map.RespawnPokemon(poke);
-        reprint = true;*/
     }
 
     if (reprint) {
@@ -157,7 +175,6 @@ void gameOverMenu(bool p_option) {
     }
 }
 
-
 int main() {
     srand(time(NULL));
 
@@ -209,7 +226,15 @@ int main() {
 
             break;
         case SCENE::COMBAT:
-           
+            if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8000) {
+                if (currentAction == ACTIONS::FIGHT) { currentAction = ACTIONS::CAPTURE; }
+                else if (currentAction == ACTIONS::CAPTURE) { currentAction = ACTIONS::RUN; }
+                else if (currentAction == ACTIONS::RUN) { currentAction = ACTIONS::FIGHT; }
+                uiCombatMenu(currentAction, map);
+            }
+            else if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+                combatOptions(ash, map);
+            }
             break;
         case SCENE::END_MENU:
             if (GetAsyncKeyState(VK_SPACE) & 0x8000 || GetAsyncKeyState(VK_RETURN) & 0x8000) {

@@ -52,6 +52,8 @@ public:
 
     void SpawnPokemon(int p_zone, int p_index);
     void RespawnPokemon(Pokemon& p_pokemon);
+    bool AttemptCapture(Player& p_ash, Pokemon& p_pokemon);
+    void ApplyDamageToPokemon(Pokemon& p_pokemon);
 
     void SpawnPokeball(int p_zone);
     void UpdatePokemonMovement();

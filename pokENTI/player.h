@@ -17,6 +17,7 @@ public:
     ~Player();
 
     void Move(int dx, int dy);
+    void UsePokeBall();
     int GetX();
     int GetY();
     char GetDirection() const;

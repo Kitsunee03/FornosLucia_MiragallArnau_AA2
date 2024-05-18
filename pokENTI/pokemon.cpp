@@ -15,6 +15,13 @@ void Pokemon::Move(int newX, int newY) {
     y = newY;
 }
 
+void Pokemon::ReduceHealth(int damage) {
+    actualHealth -= damage;
+    if (actualHealth < 0) {
+        actualHealth = 0;
+    }
+}
+
 void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL**& map, int mapWidth, int mapHeight) {
     moveWaitTime -= 0.1f;
     if (moveWaitTime <= 0) {
