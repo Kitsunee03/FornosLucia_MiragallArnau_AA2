@@ -56,9 +56,6 @@ void Map::LoadMapSettings(const std::string filename) {
 
         mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];
         pokeballList = new PokeBall[MAX_POKEBALLS];
-        for (int i = 0; i < pokemonInPuebloPaleta + pokemonInBosque; ++i) {
-            mapPokeList[i].setCurrentHealth(healthPokemons);
-        }
         MAX_POKEMON_AMOUNT = pokemonInBosque + pokemonInPuebloPaleta;
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
@@ -213,7 +210,7 @@ void Map::SpawnPokemon(int p_zone, int p_index) {
         yPos = rand() % (mapHeight / 2) + (mapHeight / 2) * yOffset;
 
         if (GetCellType(xPos, yPos) == CELL::EMPTY) {
-            mapPokeList[p_index] = Pokemon(xPos, yPos);
+            mapPokeList[p_index] = Pokemon(xPos, yPos, healthPokemons);
             SetCellTypeAt(xPos, yPos, CELL::POKEMON);
             hasSpawned = true;
         }
@@ -342,7 +339,7 @@ Pokemon Map::GetPokemonInRange(Player& p_player) {
         }
     }
 
-    return Pokemon(-1, -1);
+    return Pokemon(-1, -1, 0);
 }
 
 PokeBall Map::GetPokeBallIntRange(Player& p_player) {

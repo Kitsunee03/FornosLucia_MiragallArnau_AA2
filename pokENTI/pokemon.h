@@ -11,7 +11,7 @@ private:
     int actualHealth;
     float moveWaitTime;
 public:
-    Pokemon(int initialX, int initialY);
+    Pokemon(int initialX, int initialY, int p_health);
     Pokemon();
 
     int GetX();
