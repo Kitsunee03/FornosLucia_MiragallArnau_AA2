@@ -49,6 +49,7 @@ void combatOptions(Player& p_ash, Map& p_map) {
            p_ash.AddPokemon(poke);
            p_map.RespawnPokemon(poke);
            currentScene = SCENE::MAP;
+           p_map.ZoneLockUpdate(p_ash);
            p_map.PrintView(p_ash);
        }
        break;
@@ -57,6 +58,7 @@ void combatOptions(Player& p_ash, Map& p_map) {
            p_ash.AddPokemon(poke);
            p_map.RespawnPokemon(poke);
            currentScene = SCENE::MAP;
+           p_map.ZoneLockUpdate(p_ash);
            p_map.PrintView(p_ash);
        }
        break;
