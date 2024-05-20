@@ -6,7 +6,7 @@ maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, fa
 
 Map::~Map() {
     delete[] mapPokeList;
-    delete[] pokeballList;
+    //delete[] pokeballList; //Por algún motivo este puntero corrompe la memoria en heap al llamarse
     delete[] zones_unlocked;
 
     for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
@@ -54,9 +54,9 @@ void Map::LoadMapSettings(const std::string filename) {
 
         file.close();
 
-        mapPokeList = new Pokemon[pokemonInPuebloPaleta + pokemonInBosque];
         pokeballList = new PokeBall[MAX_POKEBALLS];
         MAX_POKEMON_AMOUNT = pokemonInBosque + pokemonInPuebloPaleta;
+        mapPokeList = new Pokemon[MAX_POKEMON_AMOUNT];
     }
     else { std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl; }
 }
@@ -95,6 +95,9 @@ char Map::CellToChar(CELL p_cellType, char p_playerDir) {
         break;
     case CELL::POKEMON:
         result = 'P';
+        break;
+    case CELL::MEWTWO:
+        result = 'M';
         break;
     case CELL::POKEBALL:
         result = 'O';
@@ -155,6 +158,8 @@ void Map::PrintView(Player& p_player) {
 void Map::generateMap(Player& p_player) {
     const int player_x = p_player.GetX();
     const int player_y = p_player.GetY();
+    const int mewtwoX = 10;
+    const int mewtwoY = 10;
 
     const int quadrantWidth = mapWidth / 2;
     const int quadrantHeight = mapHeight / 2;
@@ -169,6 +174,9 @@ void Map::generateMap(Player& p_player) {
             else { map[i][j] = CELL::EMPTY; }
         }
     }
+
+    mewTwo = Pokemon(mewtwoX, mewtwoY, healthMewtwo);
+    SetCellTypeAt(mewtwoX, mewtwoY, CELL::MEWTWO);
 
     for (int i = 0; i < pokemonInPuebloPaleta + pokemonInBosque; i++) {
         if (i < pokemonInPuebloPaleta) { SpawnPokemon(0, i); }
@@ -246,10 +254,7 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
 
 
 bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
-    if (p_ash.PokeBallAmount() <= 0) {
-        std::cout << "No tienes suficientes Pokéballs." << std::endl;
-        return false;
-    }
+    if (p_ash.PokeBallAmount() <= 0) { return false; }
 
     p_ash.UsePokeBall();
 
@@ -264,11 +269,6 @@ bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
 
     float randomValue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
-    std::cout << "Salud actual del Pokémon: " << p_pokemon.GetCurrentHealth() << "/" << healthPokemons << std::endl;
-    std::cout << "Pokéballs restantes: " << p_ash.PokeBallAmount() << std::endl;
-    std::cout << "Probabilidad de captura: " << captureProbability * 100 << "%" << std::endl;
-    std::cout << "Valor aleatorio: " << randomValue << std::endl;
-
     if (randomValue < captureProbability) { return true; }
 
     return false;
@@ -276,10 +276,6 @@ bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
 
 void Map::ApplyDamageToPokemon(Pokemon& p_pokemon) {
     p_pokemon.ReduceHealth(pikachuPower);
-
-    std::cout << "El Pokémon ha recibido " << pikachuPower << " puntos de daño." << std::endl;
-    std::cout << "Salud restante del Pokémon: " << p_pokemon.GetCurrentHealth() << std::endl;
-  
 }
 
 
@@ -327,14 +323,19 @@ int Map::GetCurrentRegion(int p_x, int p_y) {
 Pokemon& Map::GetPokemonInRange(Player& p_player) {
     for (int i = p_player.GetX() - 1; i < p_player.GetX() + 2; i++) {
         for (int j = p_player.GetY() - 1; j < p_player.GetY() + 2; j++) {
+
+            if (mewTwo.GetX() == i && mewTwo.GetY() == j) { return mewTwo; }
+
             if (i > -1 && i<mapWidth && j>-1 && j < mapHeight && map[i][j] == CELL::POKEMON) {
                 for (int k = 0; k < currentPokemonAmount; k++)
                 {
                     if (mapPokeList[k].GetX() == i && mapPokeList[k].GetY() == j) { return mapPokeList[k]; }
+
                 }
             }
         }
     }
+
 
     static Pokemon emptyPokemon(-1, -1, 0);
     return emptyPokemon;
@@ -355,6 +356,7 @@ PokeBall Map::GetPokeBallIntRange(Player& p_player) {
 int Map::getWidth() { return mapWidth; }
 int Map::getHeight() { return mapHeight; }
 int Map::getCurrentPokemonAmount() { return currentPokemonAmount; }
-int Map::getPokemonHealth() { return healthPokemons; }
+int Map::getPokemonMaxHealth() { return healthPokemons; }
+int Map::getMewtwoMaxHealth() { return healthMewtwo; }
 
 void Map::setCurrentPokemonAmount(int p_currentPokemonAmount) { currentPokemonAmount = p_currentPokemonAmount; }

@@ -18,9 +18,7 @@ void Player::Move(int p_x, int p_y) {
 }
 
 void Player::UsePokeBall() {
-    if (pokeBallAmount > 0) {
-        pokeBallList[pokeBallAmount--];
-    }
+    if (pokeBallAmount > 0) { pokeBallList[pokeBallAmount--]; }
 }
 
 int Player::GetX() { return x; }

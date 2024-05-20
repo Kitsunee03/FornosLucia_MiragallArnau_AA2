@@ -1,13 +1,15 @@
 #include "pokemon.h"
 
-Pokemon::Pokemon(int initialX, int initialY, int p_health) : x(initialX), y(initialY), actualHealth(p_health), moveWaitTime(0) {
+Pokemon::Pokemon(int initialX, int initialY, int p_maxHealth) : x(initialX), y(initialY), 
+    maxHealth(p_maxHealth), actualHealth(p_maxHealth), moveWaitTime(0) {
 
 }
 Pokemon::Pokemon() {
     moveWaitTime = .0f;
-	x = 0;
-	y = 0;
+	x = -1;
+	y = -1;
     actualHealth = 0;
+    maxHealth = 0;
 }
 
 void Pokemon::Move(int newX, int newY) {
@@ -45,4 +47,5 @@ int Pokemon::GetX() { return x; }
 int Pokemon::GetY() { return y; }
 
 int Pokemon::GetCurrentHealth() { return actualHealth; }
+int Pokemon::GetMaxHealth() { return maxHealth; }
 void Pokemon::setCurrentHealth(int p_currentHealth) { actualHealth = p_currentHealth; }

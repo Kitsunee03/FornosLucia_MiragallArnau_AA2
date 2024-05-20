@@ -28,7 +28,9 @@ private:
     int healthMewtwo = 0;
     int minTimeMovePokemon = 0;
     int maxTimeMovePokemon = 0;
+
     Pokemon* mapPokeList = nullptr;
+    Pokemon mewTwo;
     
     PokeBall* pokeballList = nullptr;
     const int MAX_POKEBALLS = 0;
@@ -65,7 +67,8 @@ public:
     int getWidth();
     int getHeight();
     int getCurrentPokemonAmount();
-    int getPokemonHealth();
+    int getPokemonMaxHealth();
+    int getMewtwoMaxHealth();
 
     void setCurrentPokemonAmount(int p_currentPokemonAmount);
 

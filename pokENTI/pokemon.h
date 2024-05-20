@@ -9,6 +9,7 @@ private:
     int x;
     int y;
     int actualHealth;
+    int maxHealth;
     float moveWaitTime;
 public:
     Pokemon(int initialX, int initialY, int p_health);
@@ -17,6 +18,7 @@ public:
     int GetX();
     int GetY();
     int GetCurrentHealth();
+    int GetMaxHealth();
     void ReduceHealth(int damage);
     void setCurrentHealth(int p_currentHealth);
     void Move(int newX, int newY);
