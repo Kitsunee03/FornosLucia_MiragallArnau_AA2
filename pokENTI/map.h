@@ -59,7 +59,7 @@ public:
     void UpdatePokemonMovement();
     int GetCurrentRegion(int x, int y);
 
-    Pokemon GetPokemonInRange(Player& player);
+    Pokemon& GetPokemonInRange(Player& player);
     PokeBall GetPokeBallIntRange(Player& player);
 
     int getWidth();

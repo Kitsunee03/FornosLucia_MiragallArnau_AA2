@@ -4,7 +4,7 @@
 SCENE currentScene;
 ACTIONS currentAction;
 
-void uiCombatMenu(ACTIONS p_actions, Map& p_map) {
+void uiCombatMenu(ACTIONS p_actions, Map& p_map, Player& p_ash) {
     system("cls");
     std::cout << "  " <<"    ___         __                     ____        __" << std::endl;
     std::cout << "  " <<"   /   |  _____/ /_     _   _______   / __ \\____  / /_____  ____ ___  ____  ____" << std::endl;
@@ -13,8 +13,12 @@ void uiCombatMenu(ACTIONS p_actions, Map& p_map) {
     std::cout << "  " <<"/_/  |_/____/_/ /_/    |___/____/  /_/    \\____/_/|_|\\___/_/ /_/ /_/\\____/_/ /_/" << std::endl;
     
     std::cout << "\n\n" << std::endl;
-    std::cout << "                                    POKEMON" << "    Health: " << "/" << p_map.getPokemonHealth() << std::endl;
-    std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << std::endl;
+    std::cout << "                                    POKEMON" << "    Health: " << p_map.GetPokemonInRange(p_ash).GetCurrentHealth() << "/" << p_map.getPokemonHealth() << std::endl;
+    std::cout << "\n\n\n\n\n";
+    std::cout << "                                       VS";
+    std::cout << "\n\n\n\n\n";
+    std::cout << "                                    PIKACHU";
+    std::cout << "\n\n\n\n" << std::endl;
 
     switch (p_actions)
     {
@@ -37,26 +41,30 @@ void uiCombatMenu(ACTIONS p_actions, Map& p_map) {
 }
 
 void combatOptions(Player& p_ash, Map& p_map) {
-    Pokemon poke = p_map.GetPokemonInRange(p_ash);
-    switch (currentAction) {
-    case ACTIONS::FIGHT:
-        // PORQUE NO DA LA VIDA DEL POKEMON
-        std::cout << poke.GetCurrentHealth();
-        //p_map.ApplyDamageToPokemon(p_map.GetPokemonInRange(p_ash));
-        break;
-    case ACTIONS::CAPTURE:
-        if (p_map.AttemptCapture(p_ash, poke)){
-            p_ash.AddPokemon(poke);
-            p_map.RespawnPokemon(poke);
-            currentScene = SCENE::MAP;
-            p_map.PrintView(p_ash);
-        }
-        break;
-    case ACTIONS::RUN:
-        currentScene = SCENE::MAP;
-        p_map.PrintView(p_ash);
-        break;
-    }
+   Pokemon& poke = p_map.GetPokemonInRange(p_ash);
+   switch (currentAction) {
+   case ACTIONS::FIGHT:
+       p_map.ApplyDamageToPokemon(poke);
+       if (p_map.GetPokemonInRange(p_ash).GetCurrentHealth() <= 0) {
+           p_ash.AddPokemon(poke);
+           p_map.RespawnPokemon(poke);
+           currentScene = SCENE::MAP;
+           p_map.PrintView(p_ash);
+       }
+       break;
+   case ACTIONS::CAPTURE:
+       if (p_map.AttemptCapture(p_ash, poke)) {
+           p_ash.AddPokemon(poke);
+           p_map.RespawnPokemon(poke);
+           currentScene = SCENE::MAP;
+           p_map.PrintView(p_ash);
+       }
+       break;
+   case ACTIONS::RUN:
+       currentScene = SCENE::MAP;
+       p_map.PrintView(p_ash);
+       break;
+   }
 }
 
 void movementInput(Player& p_ash, Map& p_map) {
@@ -106,7 +114,7 @@ void captureInput(Player& p_ash, Map& p_map) {
     if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
         if (p_map.GetPokemonInRange(p_ash).GetX() == -1) { return; }
         currentScene = SCENE::COMBAT;
-        uiCombatMenu(currentAction, p_map);
+        uiCombatMenu(currentAction, p_map, p_ash);
     }
 
     if (reprint) {
@@ -230,7 +238,7 @@ int main() {
                 if (currentAction == ACTIONS::FIGHT) { currentAction = ACTIONS::CAPTURE; }
                 else if (currentAction == ACTIONS::CAPTURE) { currentAction = ACTIONS::RUN; }
                 else if (currentAction == ACTIONS::RUN) { currentAction = ACTIONS::FIGHT; }
-                uiCombatMenu(currentAction, map);
+                uiCombatMenu(currentAction, map, ash);
             }
             else if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
                 combatOptions(ash, map);

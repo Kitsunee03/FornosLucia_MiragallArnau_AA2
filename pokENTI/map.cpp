@@ -240,6 +240,8 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
             hasBeenMoved = true;
         }
     }
+
+    mapPokeList[index].setCurrentHealth(healthPokemons);
 }
 
 
@@ -255,9 +257,10 @@ bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
     float currentHealth = static_cast<float>(p_pokemon.GetCurrentHealth());
     float healthRatio = currentHealth / maxHealth;
 
-    float baseProbability = 0.5f; 
+    float baseProbability = 0.1f;
+    float maxProbability = 0.9f;
 
-    float captureProbability = baseProbability + (1.0f - baseProbability) / (1.0f + std::exp(-8.0f * (healthRatio - 0.7f)));
+    float captureProbability = baseProbability + (maxProbability - baseProbability) * (1.0f - healthRatio);
 
     float randomValue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
@@ -266,9 +269,7 @@ bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
     std::cout << "Probabilidad de captura: " << captureProbability * 100 << "%" << std::endl;
     std::cout << "Valor aleatorio: " << randomValue << std::endl;
 
-    if (randomValue < captureProbability) {
-        return true;
-    }
+    if (randomValue < captureProbability) { return true; }
 
     return false;
 }
@@ -276,13 +277,9 @@ bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
 void Map::ApplyDamageToPokemon(Pokemon& p_pokemon) {
     p_pokemon.ReduceHealth(pikachuPower);
 
-    if (p_pokemon.GetCurrentHealth() <= 0) {
-        std::cout << "¡El Pokémon ha sido debilitado!" << std::endl;
-    }
-    else {
-        std::cout << "El Pokémon ha recibido " << pikachuPower << " puntos de daño." << std::endl;
-        std::cout << "Salud restante del Pokémon: " << p_pokemon.GetCurrentHealth() << std::endl;
-    }
+    std::cout << "El Pokémon ha recibido " << pikachuPower << " puntos de daño." << std::endl;
+    std::cout << "Salud restante del Pokémon: " << p_pokemon.GetCurrentHealth() << std::endl;
+  
 }
 
 
@@ -327,7 +324,7 @@ int Map::GetCurrentRegion(int p_x, int p_y) {
 }
 
 
-Pokemon Map::GetPokemonInRange(Player& p_player) {
+Pokemon& Map::GetPokemonInRange(Player& p_player) {
     for (int i = p_player.GetX() - 1; i < p_player.GetX() + 2; i++) {
         for (int j = p_player.GetY() - 1; j < p_player.GetY() + 2; j++) {
             if (i > -1 && i<mapWidth && j>-1 && j < mapHeight && map[i][j] == CELL::POKEMON) {
@@ -339,7 +336,8 @@ Pokemon Map::GetPokemonInRange(Player& p_player) {
         }
     }
 
-    return Pokemon(-1, -1, 0);
+    static Pokemon emptyPokemon(-1, -1, 0);
+    return emptyPokemon;
 }
 
 PokeBall Map::GetPokeBallIntRange(Player& p_player) {
