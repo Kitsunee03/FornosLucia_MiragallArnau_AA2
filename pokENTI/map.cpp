@@ -158,11 +158,12 @@ void Map::PrintView(Player& p_player) {
 void Map::generateMap(Player& p_player) {
     const int player_x = p_player.GetX();
     const int player_y = p_player.GetY();
-    const int mewtwoX = 10;
-    const int mewtwoY = 10;
 
     const int quadrantWidth = mapWidth / 2;
     const int quadrantHeight = mapHeight / 2;
+
+    const int mewtwoX = quadrantWidth * 1.5f;
+    const int mewtwoY = quadrantHeight * 1.5f;
 
     for (int i = 0; i < mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
@@ -286,7 +287,7 @@ void Map::UpdatePokemonMovement() {
         int zone = GetCurrentRegion(pokemonX, pokemonY);
 
         if (IsZoneUnlocked(zone)) {
-            mapPokeList[i].UpdateMoveWaitTime(minTimeMovePokemon, maxTimeMovePokemon, map, mapWidth, mapHeight);
+            mapPokeList[i].UpdateMoveWaitTime(minTimeMovePokemon, maxTimeMovePokemon, map, mapWidth, mapHeight, zone);
         }
     }
 }

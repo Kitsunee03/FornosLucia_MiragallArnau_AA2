@@ -227,6 +227,7 @@ void combatOptions(Player& p_ash, Map& p_map) {
                 p_map.PrintView(p_ash);
             }
         }
+        else { uiCombatMenu(currentAction, p_map, p_ash); }
         break;
     case ACTIONS::RUN:
         currentScene = SCENE::MAP;
@@ -255,8 +256,6 @@ int main() {
     mainTitleMenu(mainMenuOption, true);
 
     while (!gameOver) {
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { gameOver = true; }
-
         switch (currentScene)
         {
         case SCENE::MAIN_MENU:
@@ -275,6 +274,10 @@ int main() {
         case SCENE::MAP:
             movementInput(ash, map);
             captureInput(ash, map);
+
+            //for testing
+            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { ash.AddPokemon(Pokemon(1, 1, 100)); map.PrintView(ash); }
+
             map.UpdatePokemonMovement();
 
             newMapView = map.GetMapView(ash);

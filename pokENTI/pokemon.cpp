@@ -22,24 +22,31 @@ void Pokemon::ReduceHealth(int damage) {
     if (actualHealth < 0) { actualHealth = 0; }
 }
 
-void Pokemon::UpdateMoveWaitTime(int minTime, int maxTime, CELL**& map, int mapWidth, int mapHeight) {
+void Pokemon::UpdateMoveWaitTime(int p_minTime, int p_maxTime, CELL**& p_map, int p_mapWidth, int p_mapHeight, int p_zone) {
     moveWaitTime -= 0.1f;
     if (moveWaitTime <= 0) {
+        int xOffset = (p_zone == 2 || p_zone == 3) ? 1 : 0;
+        int yOffset = (p_zone == 1 || p_zone == 3) ? 1 : 0;
+
+
         int deltaX = (rand() % 3) - 1;
         int deltaY = (rand() % 3) - 1;
 
         int newX = x + deltaX;
         int newY = y + deltaY;
 
-        if (newX >= 0 && newX < mapWidth && newY >= 0 && newY < mapHeight) {
-            if (map[newX][newY] == CELL::EMPTY) {
-                map[x][y] = CELL::EMPTY;
+        bool correctX = (newX < (p_mapWidth / 2) + (p_mapWidth / 2) * xOffset) && (newX >= (p_mapWidth / 2) * xOffset);
+        bool correctY = (newY < (p_mapHeight / 2) + (p_mapHeight / 2) * yOffset) && (newY >= (p_mapHeight / 2) * yOffset);
+
+        if (correctX && correctY) {
+            if (p_map[newX][newY] == CELL::EMPTY) {
+                p_map[x][y] = CELL::EMPTY;
                 Move(newX, newY);
-                map[x][y] = CELL::POKEMON;
+                p_map[x][y] = CELL::POKEMON;
             }
         }
 
-        moveWaitTime = float(rand() % (maxTime - minTime + 1) + minTime);
+        moveWaitTime = float(rand() % (p_maxTime - p_minTime + 1) + p_minTime);
     }
 }
 
