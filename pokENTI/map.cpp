@@ -1,8 +1,8 @@
 #include "map.h"
 
 Map::Map() : mapWidth(0), mapHeight(0), pokemonInPuebloPaleta(0), requiredPokemonForBosque(0),
-pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), pikachuPower(0), healthPokemons(0), healthMewtwo(0), minTimeMovePokemon(0), 
-maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}), MAX_POKEBALLS(1), currentPokeBallsAmount(0){}
+pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), pikachuPower(0), healthPokemons(0), healthMewtwo(0), minTimeMovePokemon(0),
+maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}), MAX_POKEBALLS(1), currentPokemonAmount(0), currentPokeBallsAmount(0) {}
 
 Map::~Map() {
     delete[] mapPokeList;
@@ -230,7 +230,6 @@ void Map::RespawnPokemon(Pokemon& p_pokemon) {
     int xOffset = (p_pokemon.GetX() >= mapWidth / 2) ? 1 : 0;
     int yOffset = (p_pokemon.GetY() >= mapHeight / 2) ? 1 : 0;
 
-    //find pokemon on pokemon array to update pos
     int index = 0;
     for (; index < currentPokemonAmount; index++){
         if (mapPokeList[index].GetX() == p_pokemon.GetX() && mapPokeList[index].GetY() == p_pokemon.GetY()) { break; }
@@ -352,6 +351,17 @@ PokeBall Map::GetPokeBallIntRange(Player& p_player) {
     }
 
     return PokeBall(-1, -1);
+}
+
+void Map::resetMap(Player& p_player) {
+    map = new CELL * [mapWidth];
+    for (int i = 0; i < mapWidth; i++) { map[i] = new CELL[mapHeight]; }
+
+    zones_unlocked = new bool[4] {true, false, false, false};
+    currentPokemonAmount = 0;
+    currentPokeBallsAmount = 0;
+
+    generateMap(p_player);
 }
 
 int Map::getWidth() { return mapWidth; }

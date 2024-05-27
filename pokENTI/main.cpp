@@ -108,7 +108,7 @@ void captureInput(Player& p_ash, Map& p_map) {
 }
 
 void mainTitleText(bool p_firstTimeLoading) {
-    float timeBetweenLines = 3000 / 17;
+    const float timeBetweenLines = 3000 / 17;
     std::cout << "      ....      ..                       ..            ..      .                        s       ." << std::endl;
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
     std::cout << "    +^\"\"888h. ~\"888h               < .z@8\"`         x88f` `..x88. .>                   :8      @88>" << std::endl;
@@ -145,7 +145,7 @@ void mainTitleText(bool p_firstTimeLoading) {
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
 }
 void gameOverText(bool p_firstTimeLoading) {
-    float timeBetweenLines = 5000 / 6;
+    const float timeBetweenLines = 500;
     std::cout << "\n\t      ,-=-.       ______     _" << std::endl;
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
     std::cout << "\t     /  +  \\     />----->  _|A|_" << std::endl;
@@ -157,7 +157,6 @@ void gameOverText(bool p_firstTimeLoading) {
     std::cout << "\t\\vV,,|_____|V,//_____/VvV,v,|_|/,,vhjwv/," << std::endl;
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
     std::cout << "    -------------------------------------------------\n\n" << std::endl;
-    if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
 }
 
 void mainTitleMenu(bool p_option, bool p_firstTimeLoading) {
@@ -246,9 +245,6 @@ int main() {
 
     map.generateMap(ash);
 
-    const int player_x = ash.GetX();
-    const int player_y = ash.GetY();
-
     std::string currentMapView = map.GetMapView(ash);
     std::string newMapView = "nothing yet";
 
@@ -275,8 +271,12 @@ int main() {
             movementInput(ash, map);
             captureInput(ash, map);
 
-            //for testing
-            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { ash.AddPokemon(Pokemon(1, 1, 100)); map.PrintView(ash); }
+            //Testing helpers
+            if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { ash.AddPokemon(Pokemon(1, 1, 100)); map.PrintView(ash); }
+            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+                currentScene = SCENE::END_MENU;
+                gameOverMenu(false, true);
+            }
 
             map.UpdatePokemonMovement();
 
@@ -308,10 +308,11 @@ int main() {
             if (GetAsyncKeyState(VK_SPACE) & 0x8000 || GetAsyncKeyState(VK_RETURN) & 0x8000) {
                 if (mainMenuOption) { gameOver = true; }
                 else {
-                    //TO DO
-                    //RESET MEWTWO
-                    //RESET PLAYER
-                    //RESET MAP
+                    ash = Player(2, 2);
+                    map.resetMap(ash);
+
+                    currentMapView = map.GetMapView(ash);
+                    newMapView = "nothing yet";
 
                     currentScene = SCENE::MAP;
                     map.PrintView(ash);
