@@ -9,7 +9,9 @@ Player::Player(int initialX, int initialY) : x(initialX), y(initialY), direction
 
 Player::~Player() {
     delete[] pokeList;
+    pokeList = nullptr;
     delete[] pokeBallList;
+    pokeBallList = nullptr;
 }
 
 void Player::Move(int p_x, int p_y) {

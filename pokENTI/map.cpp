@@ -6,11 +6,16 @@ maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, fa
 
 Map::~Map() {
     delete[] mapPokeList;
+    mapPokeList = nullptr;
     //delete[] pokeballList; //Por algún motivo este puntero corrompe la memoria en heap al llamarse
-    delete[] zones_unlocked;
+    //pokeballList = nullptr;
 
-    for (int i = 0; i < mapWidth; ++i) { delete[] map[i]; }
+    delete[] zones_unlocked;
+    zones_unlocked = nullptr;
+
+    for (int i = 0; i < mapWidth; ++i) { delete map[i]; }
     delete[] map;
+    map = nullptr;
 }
 
 void Map::LoadMapSettings(const std::string filename) {
