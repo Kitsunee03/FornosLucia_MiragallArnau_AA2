@@ -148,11 +148,20 @@ void gameOverText(bool p_firstTimeLoading) {
     const float timeBetweenLines = 500;
     std::cout << "\n\t      ,-=-.       ______     _" << std::endl;
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
-    std::cout << "\t     /  +  \\     />----->  _|A|_" << std::endl;
-    if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
-    std::cout << "\t     | ~~~ |    // -/- /  |_ S _|" << std::endl;
-    if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
-    std::cout << "\t     |R.I.P|   //  /  /     |H|" << std::endl;
+    if (victory) {
+        std::cout << "\t     /  +  \\     />----->  _|M|_" << std::endl;
+        if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
+        std::cout << "\t     | ~~~ |    // -/- /  |_ E _|" << std::endl;
+        if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
+        std::cout << "\t     |R.I.P|   //  /  /     |W|" << std::endl;
+    }
+    else {
+        std::cout << "\t     /  +  \\     />----->  _|A|_" << std::endl;
+        if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
+        std::cout << "\t     | ~~~ |    // -/- /  |_ S _|" << std::endl;
+        if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
+        std::cout << "\t     |R.I.P|   //  /  /     |H|" << std::endl;
+    }
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
     std::cout << "\t\\vV,,|_____|V,//_____/VvV,v,|_|/,,vhjwv/," << std::endl;
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
@@ -202,7 +211,8 @@ void combatOptions(Player& p_ash, Map& p_map) {
         p_map.ApplyDamageToPokemon(poke);
 
         if (poke.GetCurrentHealth() <= 0 && poke.GetMaxHealth() == p_map.getMewtwoMaxHealth()) {
-            currentScene = SCENE::END_MENU; // you killed mewtwo
+            victory = true;
+            currentScene = SCENE::END_MENU;
             gameOverMenu(false, true);
         }
         else if (poke.GetCurrentHealth() <= 0) {
@@ -218,7 +228,7 @@ void combatOptions(Player& p_ash, Map& p_map) {
 
             if (poke.GetMaxHealth() == p_map.getMewtwoMaxHealth()) {
                 victory = true;
-                currentScene = SCENE::END_MENU; // Mewtwo is yours!
+                currentScene = SCENE::END_MENU; 
                 gameOverMenu(false, true);
             }
             else {
@@ -275,7 +285,8 @@ int main() {
             captureInput(ash, map);
 
             //Testing helpers
-            if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { ash.AddPokemon(Pokemon(1, 1, 100)); map.PrintView(ash); }
+            if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { ash.AddPokemon(Pokemon(1, 1, 100)); map.PrintView(ash); map.ZoneLockUpdate(ash);
+            }
             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
                 currentScene = SCENE::END_MENU;
                 gameOverMenu(false, true);
