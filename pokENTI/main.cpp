@@ -156,7 +156,10 @@ void gameOverText(bool p_firstTimeLoading) {
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
     std::cout << "\t\\vV,,|_____|V,//_____/VvV,v,|_|/,,vhjwv/," << std::endl;
     if (p_firstTimeLoading) { Sleep(timeBetweenLines); }
-    std::cout << "    -------------------------------------------------\n\n" << std::endl;
+    std::cout << "    -------------------------------------------------" << std::endl;
+
+    if (victory) { std::cout << "  You caught Mewtwo, lived a long life, and died, congrats!!\n\n" << std::endl; }
+    else { std::cout << "      Your guts were smashed and eaten by Mewtwo...\n\n" << std::endl; }
 }
 
 void mainTitleMenu(bool p_option, bool p_firstTimeLoading) {
