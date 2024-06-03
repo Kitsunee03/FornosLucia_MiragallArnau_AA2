@@ -167,10 +167,8 @@ void Map::generateMap(Player& p_player) {
     const int quadrantWidth = mapWidth / 2;
     const int quadrantHeight = mapHeight / 2;
 
-    //const int mewtwoX = quadrantWidth * 1.5f;
-    //const int mewtwoY = quadrantHeight * 1.5f;
-    const int mewtwoX = 5;
-    const int mewtwoY = 5;
+    const int mewtwoX = quadrantWidth * 1.5f;
+    const int mewtwoY = quadrantHeight * 1.5f;
 
     for (int i = 0; i < mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
