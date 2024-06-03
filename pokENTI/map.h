@@ -73,6 +73,6 @@ public:
     void setCurrentPokemonAmount(int p_currentPokemonAmount);
 
     void resetMap(Player& p_player);
-    ~Map();
+    void freeMemory();
 };
 #endif 

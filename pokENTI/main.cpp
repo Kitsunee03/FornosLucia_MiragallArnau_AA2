@@ -356,5 +356,7 @@ int main() {
         Sleep(1000 / FPS);
     }
 
+    ash.freeMemory();
+    map.freeMemory();
     return 0;
 }

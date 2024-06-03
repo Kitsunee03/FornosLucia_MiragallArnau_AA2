@@ -7,7 +7,7 @@ Player::Player(int initialX, int initialY) : x(initialX), y(initialY), direction
     pokeBallList = new PokeBall[pokeBallAmount];
 }
 
-Player::~Player() {
+void Player::freeMemory() {
     delete[] pokeList;
     pokeList = nullptr;
     delete[] pokeBallList;

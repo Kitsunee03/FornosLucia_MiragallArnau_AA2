@@ -4,7 +4,7 @@ Map::Map() : mapWidth(0), mapHeight(0), pokemonInPuebloPaleta(0), requiredPokemo
 pokemonInBosque(0), pokemonRequiredForCuevaCeleste(0), pikachuPower(0), healthPokemons(0), healthMewtwo(0), minTimeMovePokemon(0),
 maxTimeMovePokemon(0), map(nullptr), zones_unlocked(new bool[4] {true, false, false, false}), MAX_POKEBALLS(1), currentPokemonAmount(0), currentPokeBallsAmount(0) {}
 
-Map::~Map() {
+void Map::freeMemory() {
     delete[] mapPokeList;
     mapPokeList = nullptr;
     //delete[] pokeballList; //Por algún motivo este puntero corrompe la memoria en heap al llamarse

@@ -14,7 +14,7 @@ private:
     PokeBall* pokeBallList = nullptr;
 public:
     Player(int initialX, int initialY);
-    ~Player();
+    void freeMemory();
 
     void Move(int dx, int dy);
     void UsePokeBall();
