@@ -167,8 +167,10 @@ void Map::generateMap(Player& p_player) {
     const int quadrantWidth = mapWidth / 2;
     const int quadrantHeight = mapHeight / 2;
 
-    const int mewtwoX = quadrantWidth * 1.5f;
-    const int mewtwoY = quadrantHeight * 1.5f;
+    //const int mewtwoX = quadrantWidth * 1.5f;
+    //const int mewtwoY = quadrantHeight * 1.5f;
+    const int mewtwoX = 5;
+    const int mewtwoY = 5;
 
     for (int i = 0; i < mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
@@ -263,12 +265,17 @@ bool Map::AttemptCapture(Player& p_ash, Pokemon& p_pokemon) {
 
     p_ash.UsePokeBall();
 
-    float maxHealth = static_cast<float>(healthPokemons);
+    float maxHealth;
+    if (p_pokemon.GetMaxHealth() == getMewtwoMaxHealth()) { maxHealth = static_cast<float>(healthMewtwo); }
+    else { maxHealth = static_cast<float>(healthPokemons); }
+
     float currentHealth = static_cast<float>(p_pokemon.GetCurrentHealth());
     float healthRatio = currentHealth / maxHealth;
 
     float baseProbability = 0.1f;
-    float maxProbability = 0.9f;
+    float maxProbability;
+    if (p_pokemon.GetMaxHealth() == getMewtwoMaxHealth()) { maxProbability = 0.7f; }
+    else { maxProbability = 0.9f; }
 
     float captureProbability = baseProbability + (maxProbability - baseProbability) * (1.0f - healthRatio);
 

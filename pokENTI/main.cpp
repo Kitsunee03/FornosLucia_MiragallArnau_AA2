@@ -211,8 +211,7 @@ void combatOptions(Player& p_ash, Map& p_map) {
         p_map.ApplyDamageToPokemon(poke);
 
         if (poke.GetCurrentHealth() <= 0 && poke.GetMaxHealth() == p_map.getMewtwoMaxHealth()) {
-            victory = true;
-            currentScene = SCENE::END_MENU;
+            currentScene = SCENE::END_MENU;              //mewtwo dead
             gameOverMenu(false, true);
         }
         else if (poke.GetCurrentHealth() <= 0) {
@@ -227,7 +226,7 @@ void combatOptions(Player& p_ash, Map& p_map) {
         if (p_map.AttemptCapture(p_ash, poke)) {
 
             if (poke.GetMaxHealth() == p_map.getMewtwoMaxHealth()) {
-                victory = true;
+                victory = true;                         //mewtwo captured
                 currentScene = SCENE::END_MENU; 
                 gameOverMenu(false, true);
             }
@@ -242,8 +241,14 @@ void combatOptions(Player& p_ash, Map& p_map) {
         else { uiCombatMenu(currentAction, p_map, p_ash); }
         break;
     case ACTIONS::RUN:
-        currentScene = SCENE::MAP;
-        p_map.PrintView(p_ash);
+        if (poke.GetMaxHealth() == p_map.getMewtwoMaxHealth()) { //you can't run from mewtwo, death
+            currentScene = SCENE::END_MENU;
+            gameOverMenu(false, true);
+        }
+        else {
+            currentScene = SCENE::MAP;
+            p_map.PrintView(p_ash);
+        }
         break;
     }
 }
@@ -302,6 +307,12 @@ int main() {
 
             break;
         case SCENE::COMBAT:
+            //if mewtwo and no pokeballs, die
+            if (ash.PokeBallAmount() <= 0 && map.GetPokemonInRange(ash).GetMaxHealth() == map.getMewtwoMaxHealth()) {
+                currentScene = SCENE::END_MENU;
+                gameOverMenu(false, true);
+            }
+
             if (GetAsyncKeyState(VK_UP) & 0x8000) {
                 if (currentAction == ACTIONS::RUN) { currentAction = ACTIONS::CAPTURE; }
                 else if (currentAction == ACTIONS::FIGHT) { currentAction = ACTIONS::RUN; }
